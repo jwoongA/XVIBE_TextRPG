@@ -22,25 +22,25 @@ class Character
         Job = job;
         Level = 1;
         Exp = 0;
-        Gold = 100;
+        Gold = 1500;
 
         // 직업에 따라 초기 능력치 설정
         switch (job)
         {
             case "전사":
-                MaxHP = 150;
-                Attack = 15;
-                Defense = 10;
-                break;
-            case "마법사":
-                MaxHP = 80;
-                Attack = 25;
+                MaxHP = 100;
+                Attack = 10;
                 Defense = 5;
                 break;
+            case "마법사":
+                MaxHP = 60;
+                Attack = 15;
+                Defense = 3;
+                break;
             case "도적":
-                MaxHP = 100;
-                Attack = 18;
-                Defense = 7;
+                MaxHP = 80;
+                Attack = 12;
+                Defense = 4;
                 break;
             default:
                 MaxHP = 100;
