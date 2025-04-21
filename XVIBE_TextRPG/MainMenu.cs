@@ -6,15 +6,7 @@ using System.Threading.Tasks;
 
 namespace XVIBE_TextRPG
 {
-    internal class Program 
-    {
-        static void Main(string[] args) // Program.cs Main문에 적용
-        {
-            Select_Scene scene = new Select_Scene(); // 화면전환 인스턴스 선언
-
-            scene.Scene(); // 게임 시작 화면으로 이동
-        }
-    }
+    
 
     class Select_Scene() // 화면 전환
     {
