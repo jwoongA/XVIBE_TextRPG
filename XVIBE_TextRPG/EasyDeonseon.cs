@@ -214,7 +214,7 @@ namespace XVIBE_TextRPG
             battleLog.Clear(); // 로그 초기화
             Console.WriteLine(new string('-', 40)); // 구분선
             Console.WriteLine("아무 키나 눌러 다음 턴으로 진행하세요...");
-            Console.ReadKey();
+            Console.ReadLine();
         }
 
         // 전투 승리 메서드
@@ -222,7 +222,7 @@ namespace XVIBE_TextRPG
         {
             Console.WriteLine("[알림] 전투 승리 메서드는 아직 구현되지 않았습니다.");
             Console.WriteLine("아무 키나 눌러주세요.");
-            Console.ReadKey();
+            Console.ReadLine();
         }
 
         // 전투 패배 메서드
@@ -230,7 +230,7 @@ namespace XVIBE_TextRPG
         {
             Console.WriteLine("[알림] 전투 패배 메서드는 아직 구현되지 않았습니다.");
             Console.WriteLine("아무 키나 눌러주세요.");
-            Console.ReadKey();
+            Console.ReadLine();
         }
     }
 }
