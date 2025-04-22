@@ -4,7 +4,10 @@
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello, World!");
+            Logo.LogoPrint(); // 로고 출력
+            PlayerSettings.InitializePlayer();
+
+            MainMenu.ShowMainMenu(); // 메인 메뉴 표시
         }
     }
 }
