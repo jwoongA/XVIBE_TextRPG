@@ -41,6 +41,5 @@ namespace XVIBE_TextRPG
                     break;
             }
         }
-
-}
+    }
 }

@@ -25,8 +25,6 @@ namespace XVIBE_TextRPG
         public static int CurrentMP { get; set; } = MaxMP;
         public static int TotalATK { get; set; } = 10; // 장비와 레벨에 따라 결정되도록 수정 필요
         public static int TotalDEF { get; set; } = 5; // 장비와 레벨에 따라 결정되도록 수정 필요
-        public static string ClassType { get; set; } = "전사"; // 임의로 설정한 클래스 타입
-        
         
 
         // 전투 턴 동안 추가 공격력

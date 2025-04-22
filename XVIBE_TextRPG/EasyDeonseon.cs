@@ -129,7 +129,7 @@ namespace XVIBE_TextRPG
         private void DisplayPlayerStatus()
         {
             Console.WriteLine($"플레이어 상태: HP: {Player.CurrentHP}/{Player.MaxHP}, MP: {Player.CurrentMP}/{Player.MaxMP}");
-            Console.WriteLine($"직업: {Player.ClassType}, 레벨: {Player.Level}, 경험치: {Player.Exp}");
+            Console.WriteLine($"직업: {Player.Job}, 레벨: {Player.Level}, 경험치: {Player.Exp}");
             Console.WriteLine($"공격력: {Player.GetCurrentATK()}, 방어력: {Player.TotalDEF}");
             Console.WriteLine(new string('-', 40)); // 구분선
         }
@@ -163,17 +163,17 @@ namespace XVIBE_TextRPG
         // 스킬 사용 메서드
         private void UseSkill(Enemy target)
         {
-            if (Player.ClassType == "전사")
+            if (Player.Job == "전사")
             {
                 Player.WarriorSkill();
                 battleLog.Add("플레이어가 전사의 스킬을 사용하여 이번 턴 동안 공격력을 증가시켰습니다!");
             }
-            else if (Player.ClassType == "도적")
+            else if (Player.Job == "도적")
             {
                 Player.ThiefSkill(target);
                 battleLog.Add($"플레이어가 도적의 스킬을 사용하여 {target.Name}에게 큰 피해를 입혔습니다!");
             }
-            else if (Player.ClassType == "마법사")
+            else if (Player.Job == "마법사")
             {
                 Player.MageSkill(monsters.ToArray());
                 battleLog.Add("플레이어가 마법사의 스킬을 사용하여 모든 적에게 피해를 입혔습니다!");
