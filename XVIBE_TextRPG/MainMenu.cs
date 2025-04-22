@@ -17,6 +17,7 @@ namespace XVIBE_TextRPG
                 Console.WriteLine("스파르타 마을에 오신 여러분 환영합니다.");
                 Console.WriteLine("이곳에서 던전으로 들어가기 전 활동을 할 수 있습니다.");
                 Console.WriteLine();
+                Console.WriteLine("1. 상태 보기");
                 Console.WriteLine("4. 던전 입장");
                 Console.WriteLine("0. 종료하기");
                 Console.WriteLine();
@@ -26,6 +27,11 @@ namespace XVIBE_TextRPG
 
                 switch (input)
                 {
+
+                    case "1":// 스테이터스
+                        Console.Clear();
+                        Player.ShowStatus();
+                        break;
                     case "4"://던전 입장 (던전 입장 이외의 메서드들은 생략)
                         Battlephase.EnterDungeon();
                         break;

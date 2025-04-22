@@ -4,8 +4,10 @@
     {
         static void Main(string[] args)
         {
-            //캐릭터 이름 및 직업 생성은 생략
-            MainMenu.ShowMainMenu();
+            Logo.LogoPrint(); // 로고 출력
+            PlayerSettings.InitializePlayer();
+
+            MainMenu.ShowMainMenu(); // 메인 메뉴 표시
         }
     }
 }

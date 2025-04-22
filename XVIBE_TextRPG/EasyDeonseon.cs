@@ -58,7 +58,7 @@ namespace XVIBE_TextRPG
                 if (targetInput == "0")
                 {
                     Console.WriteLine("던전에서 후퇴합니다.");
-                    Player.EndTurn(); // 전투 종료 시 공격력 초기화
+                    Player.EndTurn(); // 전투 종료 시 공격력 버프 초기화
                     break;
                 }
 
@@ -129,6 +129,8 @@ namespace XVIBE_TextRPG
         private void DisplayPlayerStatus()
         {
             Console.WriteLine($"플레이어 상태: HP: {Player.CurrentHP}/{Player.MaxHP}, MP: {Player.CurrentMP}/{Player.MaxMP}");
+            Console.WriteLine($"직업: {Player.ClassType}, 레벨: {Player.Level}, 경험치: {Player.Exp}");
+            Console.WriteLine($"공격력: {Player.GetCurrentATK()}, 방어력: {Player.TotalDEF}");
             Console.WriteLine(new string('-', 40)); // 구분선
         }
 
@@ -153,7 +155,7 @@ namespace XVIBE_TextRPG
                 return;
             }
 
-            int damage = Player.GetCurrentATK(); // 현재 공격력 계산
+            int damage = Player.GetCurrentATK(); // 공버프를 고려한 현재 공격력으로 계산
             target.TakeDamage(damage);
             battleLog.Add($"플레이어가 {target.Name}에게 {damage}의 피해를 입혔습니다.");
         }
