@@ -84,7 +84,7 @@ namespace XVIBE_TextRPG
             }
         }
 
-        public string JobSelectionScene() // 3. 직업 선택 화면
+        public string JobSelectionScene(string name) // 3. 직업 선택 화면
         {
             bool loop = true; // 반복
 
@@ -93,10 +93,10 @@ namespace XVIBE_TextRPG
                 Console.Clear();
 
                 Console.WriteLine("직업 선택\n");
-                Console.WriteLine($"(사용자 지정 닉네임)을 환영합니다."); // 추후에 {name} 넣어야함
+                Console.WriteLine($"{name}을 환영합니다."); // 추후에 {name} 넣어야함
                 Console.WriteLine($"원하시는 직업을 선택해 주세요\n");
 
-                Console.WriteLine("1. 전사\n 2. 마법사\n 3. 도적"); 
+                Console.WriteLine("1. 전사\n2. 마법사\n3. 도적"); 
                 Console.Write("원하시는 행동을 입력해주세요.\n>> "); 
 
                 string input = Console.ReadLine(); // 입력 받기
