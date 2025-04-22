@@ -7,9 +7,8 @@ using System.Text.RegularExpressions;
 
 namespace XVIBE_TextRPG
 {
-    
-
     class Select_Scene // 화면 전환
+
     {
         Character player; // 전달받은 캐릭터 저장용
 
@@ -102,27 +101,31 @@ namespace XVIBE_TextRPG
                 string input = Console.ReadLine(); // 입력 받기
                 string job = ""; // 직업을 저장할 문자열 변수 선언
 
-                switch (input)
+                while (loop)
                 {
-                    case "1": 
-                        loop = false; 
-                        job = "전사";    
-                        return job; // Character 클래스에서 사용할 job을 반환한다!
+                    switch (input)
+                    {
+                        case "1":
+                            loop = false;
+                            job = "전사";
+                            return job; // Character 클래스에서 사용할 job을 반환한다!
 
-                    case "2": 
-                        loop = false;
-                        job = "마법사";
-                        return job; // Character 클래스에서 사용할 job을 반환한다!
+                        case "2":
+                            loop = false;
+                            job = "마법사";
+                            return job; // Character 클래스에서 사용할 job을 반환한다!
 
-                    case "3": 
-                        loop = false;
-                        job = "도적";
-                        return job; // Character 클래스에서 사용할 job을 반환한다!
+                        case "3":
+                            loop = false;
+                            job = "도적";
+                            return job; // Character 클래스에서 사용할 job을 반환한다!
 
-                    default: // 나머지 입력 (예외처리)
-                        Message("잘못된 입력입니다 ");
-                        job = "";
-                        return job; // Character 클래스에서 사용할 job을 반환한다!
+                        default: // 나머지 입력 (예외처리)
+                            loop = true;
+                            Message("잘못된 입력입니다 ");
+                            job = "";
+                            continue; // 올바른 답 나올때까지 반복문 계속 돌리자!
+                    }
                 }
             } 
         }
