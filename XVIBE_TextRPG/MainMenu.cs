@@ -8,8 +8,15 @@ namespace XVIBE_TextRPG
 {
     
 
-    class Select_Scene() // 화면 전환
+    class Select_Scene // 화면 전환
     {
+        Character player; // 전달받은 캐릭터 저장용
+
+        public Select_Scene(Character player) // 생성자에서 캐릭터 받아오기
+        {
+            this.player = player;
+        }
+
         public void Scene() // 1. 게임 시작 화면
         {
             bool loop = true; // 반복
@@ -27,7 +34,8 @@ namespace XVIBE_TextRPG
                 switch (input)
                 {
                     case "1": // 1번 누를 시
-                        loop = false; // 반복 종료
+                        player.ShowStatus(); // 상태 보기 메서드 호출
+                        loop = true; // 반복 종료
                                       //test1(); // 상태 보기 창으로 이동 (임의로 이름 붙임)
                         break;
 

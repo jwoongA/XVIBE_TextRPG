@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace XVIBE_TextRPG
 {
     internal class Logo
-    {
+    {        
         public static void LogoPrint()
         {
             string XVibe = "\r\n __   ____      _______ ____  ______ \r\n \\ \\ / /\\ \\    / /_   _|  _ \\|  ____|\r\n  \\ V /  \\ \\  / /  | | | |_) | |__   \r\n   > <    \\ \\/ /   | | |  _ <|  __|  \r\n  / . \\    \\  /   _| |_| |_) | |____ \r\n /_/ \\_\\    \\/   |_____|____/|______|\r\n                                     \r\n                                     \r\n";
@@ -15,7 +15,7 @@ namespace XVIBE_TextRPG
             foreach (char c in XVibe)
             {
                 Console.Write(c);
-                Thread.Sleep(10); // 타자 효과
+                Thread.Sleep(1); // 타자 효과
             }
 
             string teamMember = "팀장:변재웅, 팀원:서정원, 두승현, 정광훈, 조혜령";
@@ -40,7 +40,7 @@ namespace XVIBE_TextRPG
             Thread.Sleep(1000);
 
             Console.WriteLine();
-            Console.WriteLine("그 끝엔 — 보물도, 절망도 기다리고 있었다.");
+            Console.WriteLine("그 끝엔 보물도, 절망도 기다리고 있었다.");
             Thread.Sleep(1000);
 
             Console.WriteLine();
