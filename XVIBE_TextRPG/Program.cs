@@ -4,12 +4,19 @@
     {
         static void Main(string[] args)
         {
-            // 주석 부분 지우면 로고를 볼 수 있어요! Logo.LogoPrint(); // 로고 출력 메서드 호출
-            // 주석 부분 지우면 인트로를 볼 수 있어요! Logo.Intro(); // 인트로 출력 메서드 호출
-            Select_Scene scene = new Select_Scene(); // 화면전환 인스턴스 선언
+            //Logo.LogoPrint(); // 로고 출력 메서드 호출
+            //Logo.Intro(); // 인트로 출력 메서드 호출
+            
+            // 임시로 Select Scene 인스턴스 생성
+            Select_Scene setupScene = new Select_Scene(null); // 초기엔 캐릭터 없음
 
-            scene.Scene(); // 게임 시작 화면으로 이동
+            string name = setupScene.CharacterNameScene(); // 캐릭터 이름 입력 받기
+            string job = setupScene.JobSelectionScene(name); // 캐릭터 직업 입력 받기
 
+            Character player = new Character(name, job); // 캐릭터 생성
+
+            Select_Scene scene = new Select_Scene(player); // 캐릭터를 인자로 전달하여 Select_Scene 인스턴스 생성
+            scene.Scene(); // 게임 시작 화면 호출
         }
     }
 }
