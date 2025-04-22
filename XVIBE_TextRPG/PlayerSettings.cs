@@ -172,6 +172,7 @@ namespace XVIBE_TextRPG
             }
 
             Console.Clear();
+            Player.UpdateStats(); // 직업에 따라 스탯 업데이트
             return Player.Job;
         }
     }

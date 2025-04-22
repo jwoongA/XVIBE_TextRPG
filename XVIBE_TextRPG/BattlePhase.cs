@@ -22,6 +22,11 @@ namespace XVIBE_TextRPG
             {
                 case "1":
                     Console.WriteLine("초급 던전으로 입장합니다.");
+                    if(Player.CurrentHP == 0)
+                    {
+                        Console.WriteLine("체력이 부족하여 던전에 입장할 수 없습니다.");
+                        return;
+                    }
                     Console.WriteLine("던전 입장 중...");
                     System.Threading.Thread.Sleep(2000); // 2초 대기
                     EasyDeonseon easyDungeon = new EasyDeonseon();
