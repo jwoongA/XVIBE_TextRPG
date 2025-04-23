@@ -1,28 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
+using System.Transactions;
 
 namespace XVIBE_TextRPG
 {
-    internal class EasyDeonseon
+    public class Deonseon // 부모 클래스 이녀석을 자식 클래스인 초급 중급 고급 던전 클래스에 상속시킬거임
     {
-        private List<Enemy> monsters; // 몬스터 리스트
-        private List<string> battleLog; // 배틀 로그 리스트
+        protected List<Enemy> monsters; // 몬스터 리스트
+        protected List<string> battleLog; // 배틀 로그 리스트
 
-        public EasyDeonseon()
-        {
-            // 몬스터 생성
-            monsters = GenerateMonsters();
-            battleLog = new List<string>();
-
-            // 던전 시작
-            StartDungeon();
-        }
-
-        // 몬스터 생성 메서드
-        private List<Enemy> GenerateMonsters()
+        public virtual List<Enemy> GenerateMonsters() // 자식이 정의할 수 있도록 가상 메서드 만들기
         {
             var random = new Random();
             var monsterList = new List<Enemy>();
@@ -37,10 +28,30 @@ namespace XVIBE_TextRPG
             return monsterList;
         }
 
-        // 던전 시작 메서드
-        private void StartDungeon()
+        public virtual void ShowEnterMessage() // 자식이 정의함
         {
-            Console.WriteLine("초급 던전에 입장했습니다!");
+            Console.WriteLine("초급 던전에 입장합니다...");
+        }
+
+        public void Enter()
+        {
+            if (monsters == null) // 몬스터 생성이 안된다고 오류나서 방어코드 작성
+                monsters = GenerateMonsters();
+            if (battleLog == null)
+                battleLog = new List<string>();
+
+            ShowEnterMessage();
+            StartDungeon();
+        }
+
+        // 던전 시작 메서드
+        public void StartDungeon()
+        {
+            if (monsters == null || monsters.Count == 0)
+            {
+                Console.WriteLine("에러: 몬스터가 생성되지 않았습니다.");
+                return;
+            }
 
             while (true)
             {
@@ -126,7 +137,7 @@ namespace XVIBE_TextRPG
         }
 
         // 플레이어 상태 출력
-        private void DisplayPlayerStatus()
+        public void DisplayPlayerStatus()
         {
             Console.WriteLine($"플레이어 상태: HP: {Player.CurrentHP}/{Player.MaxHP}, MP: {Player.CurrentMP}/{Player.MaxMP}");
             Console.WriteLine($"직업: {Player.Job}, 레벨: {Player.Level}, 경험치: {Player.Exp}");
@@ -135,7 +146,7 @@ namespace XVIBE_TextRPG
         }
 
         // 몬스터 상태 출력
-        private void DisplayMonsters()
+        public void DisplayMonsters()
         {
             Console.WriteLine("현재 몬스터 상태:");
             for (int i = 0; i < monsters.Count; i++)
@@ -185,7 +196,7 @@ namespace XVIBE_TextRPG
         }
 
         // 몬스터 공격 처리
-        private void MonsterAttack()
+        public void MonsterAttack()
         {
             int totalDamage = 0;
 
@@ -203,7 +214,7 @@ namespace XVIBE_TextRPG
         }
 
         // 배틀 로그 출력
-        private void DisplayBattleLog()
+        public void DisplayBattleLog()
         {
             Console.WriteLine(new string('-', 40)); // 구분선
             Console.WriteLine("배틀 로그:");
@@ -231,6 +242,91 @@ namespace XVIBE_TextRPG
             Console.WriteLine("[알림] 전투 패배 메서드는 아직 구현되지 않았습니다.");
             Console.WriteLine("아무 키나 눌러주세요.");
             Console.ReadLine();
+        }
+
+    }
+
+    public class EasyDeonseon : Deonseon // 초급 던전
+    {
+        public override void ShowEnterMessage()
+        {
+            Console.WriteLine("초급 던전에 입장합니다!");
+        }
+          
+        public override List<Enemy> GenerateMonsters()
+        {
+            var random = new Random();
+            var monsterList = new List<Enemy>();
+
+            for (int i = 0; i < 3; i++) // 3마리 생성
+            {
+                int type = random.Next(0, 3); // 0~2 타입 랜덤 생성
+                int level = random.Next(1, 4); // 1~3 레벨 랜덤 생성
+                monsterList.Add(new Enemy(type, level));
+            }
+
+            return monsterList;
+        }
+
+        public EasyDeonseon() // 출력 메시지와 상속받은 던전 입장 메서드 실행
+        {
+            Enter();
+        }
+    }
+
+    public class NormalDeonseon : Deonseon // 중급 던전
+    {
+        public override void ShowEnterMessage()
+        {
+            Console.WriteLine("중급 던전에 입장합니다!");
+        }
+
+        public override List<Enemy> GenerateMonsters()
+        {
+            var random = new Random();
+            var monsterList = new List<Enemy>();
+
+            for (int i = 0; i < 4; i++) // 4마리 생성
+            {
+                int type = random.Next(1, 4); // 1~3 타입 랜덤 생성
+                int level = random.Next(2, 5); // 2~4 레벨 랜덤 생성
+                monsterList.Add(new Enemy(type, level));
+            }
+
+            return monsterList;
+        }
+
+        public NormalDeonseon() // 출력 메시지와 상속받은 던전 입장 메서드 실행
+        {
+            Enter();
+        }
+    }
+
+    public class HardDeonseon : Deonseon // 고급 던전
+    {
+        public override void ShowEnterMessage()
+        {
+            Console.WriteLine("고급 던전에 입장합니다!");
+        }
+
+        public override List<Enemy> GenerateMonsters()
+        {
+            var random = new Random();
+            var monsterList = new List<Enemy>();
+
+            for (int i = 0; i < 4; i++) // 4마리 생성
+            {
+                int type = random.Next(2, 5); // 2~4 타입 랜덤 생성
+                int level = random.Next(1, 4); // 1~3 레벨 랜덤 생성
+                monsterList.Add(new Enemy(type, level));
+            }
+
+            return monsterList;
+        }
+
+        public HardDeonseon() // 출력 메시지와 상속받은 던전 입장 메서드 실행
+        {
+            Enter();
         }
     }
 }

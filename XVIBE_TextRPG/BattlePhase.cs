@@ -29,7 +29,7 @@ namespace XVIBE_TextRPG
                     }
                     Console.WriteLine("던전 입장 중...");
                     System.Threading.Thread.Sleep(2000); // 2초 대기
-                    EasyDeonseon easyDungeon = new EasyDeonseon();
+                    EasyDeonseon dungeon = new EasyDeonseon(); 
 
                     break;
                 case "2":
