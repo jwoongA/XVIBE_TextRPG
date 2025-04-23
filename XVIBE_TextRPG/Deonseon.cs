@@ -13,6 +13,12 @@ namespace XVIBE_TextRPG
     {
         protected List<Enemy> monsters; // 몬스터 리스트
         protected List<string> battleLog; // 배틀 로그 리스트
+        protected List<Reward> rewards = new List<Reward>(); // 던전 클리어 보상 리스트
+
+        public Deonseon() // 생성자
+        {
+            rewards.Add(new GoldReward(GetGoldReward())); // 던전 클리어 골드 보상 rewards 리스트에 추가
+        }
 
         public virtual List<Enemy> GenerateMonsters() // 자식이 정의할 수 있도록 가상 메서드 만들기
         {
@@ -123,7 +129,7 @@ namespace XVIBE_TextRPG
                         if(!monster.NotGetExperience) // 경험치 지급을 안 했을경우
                         {
                             GetExperience(monster);
-                            monster.NotGetExperience = true; // 경험치 지급 (O)
+                            monster.NotGetExperience = true; // 경험치 지급 -완-
                         }
                     }    
                 }
@@ -263,6 +269,7 @@ namespace XVIBE_TextRPG
         // 전투 승리 메서드
         public void BattleVictory()
         {
+            GetRewards(); // 클리어 보상 호출
             Console.WriteLine("[알림] 전투 승리 메서드는 아직 구현되지 않았습니다.");
             Console.WriteLine("아무 키나 눌러주세요.");
             Console.ReadLine();
@@ -277,9 +284,24 @@ namespace XVIBE_TextRPG
         }
 
         // 경험치 획득 메서드
-        public void GetExperience(Enemy Deadmonster)
+        private void GetExperience(Enemy Deadmonster)
         {
             Player.Exp += Deadmonster.Exp;
+        }
+
+        // 각 던전별로 골드 보상액을 다르게 설정
+        protected virtual int GetGoldReward()
+        {
+            return 500; // 500G
+        }
+
+        //보상 받기 메서드
+        private void GetRewards()
+        {
+            foreach (var reward in rewards) // rewards 리스트에 있는 보상 목록
+            {
+                reward.GetReward(); // Reward.cs에 있는 GetReward에서 보상을 받음
+            }
         }
     }
 
@@ -333,6 +355,11 @@ namespace XVIBE_TextRPG
             return monsterList;
         }
 
+        protected override int GetGoldReward() // override로 중급 던전 골드 보상 재정의
+        {
+            return 1000; // 1000G
+        }
+
         public NormalDeonseon() // 출력 메시지와 상속받은 던전 입장 메서드 실행
         {
             Enter();
@@ -359,6 +386,11 @@ namespace XVIBE_TextRPG
             }
 
             return monsterList;
+        }
+
+        protected override int GetGoldReward() // override로 고급 던전 골드 보상 재정의
+        {
+            return 2000; // 2000G
         }
 
         public HardDeonseon() // 출력 메시지와 상속받은 던전 입장 메서드 실행
