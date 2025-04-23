@@ -168,6 +168,10 @@ namespace XVIBE_TextRPG
                 Console.WriteLine($"{target.Name}은(는) 이미 쓰러졌습니다.");
                 return;
             }
+            else if(Combat.IsMiss())
+            {
+                battleLog.Add($"{target.Name}을(를) 공격했지만 아무일도 일어나지 않았습니다....");
+            }
             else if (Combat.IsCriticalHit()) // 조건문 걸어서 치명타 터지는 상황 아닌 상황 나누기
             {
                 int criticalDamage = target.TakeCriticalDamage(damage);// 몬스터에게 치명타 데미지 피해
@@ -211,15 +215,21 @@ namespace XVIBE_TextRPG
 
             foreach (var monster in monsters)
             {
-                if (!monster.IsDead())
+                if(monster.IsDead())
+                {
+                    continue;   // 몬스터가 죽으면 그냥 진행해라
+                }
+                else if(Combat.IsMiss()) // 10퍼센트 확률로 회피하는 경우 회피 판정해라
+                {
+                    battleLog.Add($"플레이어가 {monster.Name}의 공격을 [회피]했습니다!");
+                }
+                else if (!monster.IsDead()) // 죽지도 않고 회피 판정도 필요없으면 데미지를 추가해라!
                 {
                     totalDamage += monster.ATK;
                 }
             }
-
             Player.CurrentHP = Math.Max(Player.CurrentHP - totalDamage, 0);
             battleLog.Add($"몬스터들이 공격하여 플레이어가 {totalDamage}의 피해를 입었습니다. 남은 HP: {Player.CurrentHP}");
-
         }
 
         // 배틀 로그 출력
