@@ -140,7 +140,7 @@ namespace XVIBE_TextRPG
             Console.WriteLine($"공격력   : {TotalATK} (+{Equipment.ATKBonus+Level})");
             Console.WriteLine($"방어력   : {TotalDEF} (+{Equipment.DEFBonus+Level/2})");
             Console.WriteLine($"보유 골드: {Gold} G");
-            Console.WriteLine("\n아무 키나 누르면 이전 화면으로 돌아갑니다.");
+            Console.WriteLine("\nEnter 키를 누르면 이전 화면으로 돌아갑니다.");
             Console.ReadLine();
         }
 
@@ -159,10 +159,35 @@ namespace XVIBE_TextRPG
                 MaxMP = Player.MaxMP,
                 CurrentMP = Player.CurrentMP,
                 TotalATK = Player.TotalATK,
-                TotalDEF = Player.TotalDEF
+                TotalDEF = Player.TotalDEF,
+
+                Inventory = Equipment.Inventory.Select(w => new WeaponData
+                {
+                    Name = w.Name,
+                    Type = w.Type.ToString(),
+                    ATK = w.ATK,
+                    Price = w.Price
+                }).ToList(),
+
+                // 장착한 물건이 있다면 WeponData에 저장, 없으면 null값
+                EquippedWeapon = Equipment.EquippedWeapon != null ? new WeaponData 
+                {
+                    Name = Equipment.EquippedWeapon.Name,
+                    Type = Equipment.EquippedWeapon.Type.ToString(),
+                    ATK = Equipment.EquippedWeapon.ATK,
+                    Price = Equipment.EquippedWeapon.Price
+                } : null
             };
 
             SaveSystem.Save(data);
+        }
+
+        // 저장된 게임 데이터 삭제
+        public static void DeletePlayerData()
+        {
+            SaveSystem.DeleteSave();
+            Console.WriteLine("Enter 키를 눌러주세요.");
+            Console.ReadLine();
         }
 
         // data 에 있는 정보 플레이어에게 전달
@@ -179,6 +204,27 @@ namespace XVIBE_TextRPG
             CurrentMP = data.CurrentMP;
             TotalATK = data.TotalATK;
             TotalDEF = data.TotalDEF;
+
+            Equipment.Inventory = data.Inventory.Select(w => new Equipment.Weapon(
+                w.Name,
+                Enum.Parse<Equipment.WeaponType>(w.Type),
+                w.ATK,
+                w.Price
+                ) ).ToList();
+
+            if (data.EquippedWeapon != null)
+            {
+                Equipment.EquippedWeapon = new Equipment.Weapon(
+                    data.EquippedWeapon.Name,
+                    Enum.Parse<Equipment.WeaponType>(data.EquippedWeapon.Type),
+                    data.EquippedWeapon.ATK,
+                    data.EquippedWeapon.Price
+                    );
+            }
+            else
+            {
+                Equipment.EquippedWeapon = null;
+            }
         }
     }
 
