@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static XVIBE_TextRPG.Enemy;
 
 namespace XVIBE_TextRPG
 {
@@ -68,7 +69,7 @@ namespace XVIBE_TextRPG
         // 전사 스킬: 전투 턴 동안 공격력 증가
         public static void WarriorSkill()
         {
-            if (CurrentHP >= 6 && CurrentMP >= 20)
+            if (CurrentHP >= 6 && CurrentMP >= 20) // 전사 스킬로 버프걸면 치명타 계산식에 반영되어 추가 코드 생략
             {
                 CurrentHP -= 5;
                 CurrentMP -= 20;
@@ -98,11 +99,21 @@ namespace XVIBE_TextRPG
         {
             if (CurrentMP >= 10)
             {
-                CurrentMP -= 10;
                 int damage = (int)(TotalATK * 1.5);
-                target.TakeDamage(damage);
-                Console.WriteLine($"도적의 스킬을 사용했습니다! {target.Name}에게 {damage}의 피해를 입혔습니다.");
-                Console.WriteLine($"남은 MP: {CurrentMP}");
+                if (Combat.IsCriticalHit())
+                {
+                    CurrentMP -= 10;
+                    int criticalDamage = target.TakeCriticalDamage(damage); // 단일적에게 도적 스킬로 강화된 공격에 크리티컬 데미지 입힘
+                    Console.WriteLine($"도적의 스킬을 사용했습니다! {target.Name}에게 {criticalDamage}의 [치명타]피해를 입혔습니다!!!");
+                    Console.WriteLine($"남은 MP: {CurrentMP}");
+                }
+                else
+                {
+                    CurrentMP -= 10;
+                    target.TakeDamage(damage);
+                    Console.WriteLine($"도적의 스킬을 사용했습니다! {target.Name}에게 {damage}의 피해를 입혔습니다.");
+                    Console.WriteLine($"남은 MP: {CurrentMP}");
+                }                   
             }
             else
             {
@@ -116,11 +127,22 @@ namespace XVIBE_TextRPG
             if (CurrentMP >= 20)
             {
                 CurrentMP -= 20;
-                foreach (var target in targets)
+                if (Combat.IsCriticalHit())
                 {
-                    target.TakeDamage(TotalATK);
-                    Console.WriteLine($"마법사의 스킬을 사용했습니다! {target.Name}에게 {TotalATK}의 피해를 입혔습니다.");
+                    foreach (var target in targets)
+                    {
+                        int criticalDamage = target.TakeCriticalDamage(TotalATK); // 마법사 스킬로 모든 적에게 강려크한 크리티컬 데미지 입힘
+                        Console.WriteLine($"마법사의 스킬을 사용했습니다! {target.Name}에게 {criticalDamage}의 [치명타]피해를 입혔습니다!!!");
+                    }
                 }
+                else
+                {
+                    foreach (var target in targets)
+                    {
+                        target.TakeDamage(TotalATK);
+                        Console.WriteLine($"마법사의 스킬을 사용했습니다! {target.Name}에게 {TotalATK}의 피해를 입혔습니다.");
+                    }
+                }             
                 Console.WriteLine($"남은 MP: {CurrentMP}");
             }
             else
