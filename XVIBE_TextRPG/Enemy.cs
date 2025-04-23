@@ -28,29 +28,29 @@ namespace XVIBE_TextRPG
             {
                 case 0: // 미니언
                     Name = "미니언";
-                    MaxHP = 1 + (level * 1);
+                    MaxHP = 15 + (level * 1);
                     ATK = 5 + level;
                     DEF = 1;
                     Exp = level;
                     break;
                 case 1: // 대포미니언
                     Name = "대포미니언";
-                    MaxHP = 1 + (level * 1);
+                    MaxHP = 15 + (level * 2);
                     ATK = 10 + level;
                     DEF = 2;
                     Exp = level + 1;
                     break;
                 case 2: // 공허충
                     Name = "공허충";
-                    MaxHP = 1;
-                    ATK = 1 + (level * 1);
+                    MaxHP = 10;
+                    ATK = 10 + (level * 3);
                     DEF = 0;
                     Exp = level + 2;
                     break;
                 case 3: // 중급 몬스터
                     Name = "중급 몬스터";
-                    MaxHP = 1 + (level * 1);
-                    ATK = 1 + (level * 1);
+                    MaxHP = 50 + (level * 5);
+                    ATK = 15 + (level * 2);
                     DEF = 5;
                     Exp = level + 3;
                     break;
