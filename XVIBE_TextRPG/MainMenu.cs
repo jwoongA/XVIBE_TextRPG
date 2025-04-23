@@ -22,6 +22,7 @@ namespace XVIBE_TextRPG
                 Console.WriteLine("2. 인벤토리");
                 Console.WriteLine("3. 상점");
                 Console.WriteLine("4. 던전 입장");
+                Console.WriteLine("5. 휴식");
                 Console.WriteLine("0. 종료하기");
                 Console.WriteLine("8. 게임 데이터 저장");
                 Console.WriteLine("9. 게임 데이터 삭제");
@@ -47,6 +48,9 @@ namespace XVIBE_TextRPG
                         break;
                     case "4"://던전 입장 (던전 입장 이외의 메서드들은 생략)
                         Battlephase.EnterDungeon();
+                        break;
+                    case "5":
+                        RestSystem.Rest();
                         break;
                     case "0":
                         Console.WriteLine("게임을 종료합니다.");
