@@ -71,7 +71,12 @@ namespace XVIBE_TextRPG
 
             public static bool IsCriticalHit()
             {
-                return randomNumber.NextDouble() < 0.15; // 0~1미만의 실수를 무작위 생성해서 0.15보다 작으면 치명타 판정
+                return randomNumber.NextDouble() < 0.15; // 0~1미만의 실수를 무작위 생성해서 0.15보다 작으면 치명타 판정 (기본공격, 스킬공격에 적용)
+            }
+
+            public static bool IsMiss()
+            {
+                return randomNumber.NextDouble() < 0.10; // 0~1미만의 실수를 무작위 생성해서 0.10보다 작으면 회피 판정 ('기본공격'에만 적용)
             }
         }
 
