@@ -236,17 +236,22 @@ namespace XVIBE_TextRPG
 
             if (data.EquippedWeapon != null)
             {
-                Equipment.EquippedWeapon = new Equipment.Weapon(
+                var loadedWeapon = new Equipment.Weapon(
                     data.EquippedWeapon.Name,
                     Enum.Parse<Equipment.WeaponType>(data.EquippedWeapon.Type),
                     data.EquippedWeapon.ATK,
                     data.EquippedWeapon.Price
                     );
+
+                Equipment.Equip(loadedWeapon);
             }
             else
             {
                 Equipment.EquippedWeapon = null;
+                Equipment.ATKBonus = 0;
             }
+
+            UpdateStats();
         }
     }
 
