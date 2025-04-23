@@ -137,7 +137,7 @@ namespace XVIBE_TextRPG
         }
 
         // 플레이어 상태 출력
-        public void DisplayPlayerStatus()
+        private void DisplayPlayerStatus()
         {
             Console.WriteLine($"플레이어 상태: HP: {Player.CurrentHP}/{Player.MaxHP}, MP: {Player.CurrentMP}/{Player.MaxMP}");
             Console.WriteLine($"직업: {Player.Job}, 레벨: {Player.Level}, 경험치: {Player.Exp}");
@@ -146,7 +146,7 @@ namespace XVIBE_TextRPG
         }
 
         // 몬스터 상태 출력
-        public void DisplayMonsters()
+        private void DisplayMonsters()
         {
             Console.WriteLine("현재 몬스터 상태:");
             for (int i = 0; i < monsters.Count; i++)
@@ -196,7 +196,7 @@ namespace XVIBE_TextRPG
         }
 
         // 몬스터 공격 처리
-        public void MonsterAttack()
+        private void MonsterAttack()
         {
             int totalDamage = 0;
 
@@ -214,7 +214,7 @@ namespace XVIBE_TextRPG
         }
 
         // 배틀 로그 출력
-        public void DisplayBattleLog()
+        private void DisplayBattleLog()
         {
             Console.WriteLine(new string('-', 40)); // 구분선
             Console.WriteLine("배틀 로그:");
