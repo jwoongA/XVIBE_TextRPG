@@ -75,11 +75,35 @@ namespace XVIBE_TextRPG
             NotGetExperience = false; // 경험치 미지급
         }
 
+        public static class Combat // 전투시 확률이 필요할때 난수 생성하는 메서드
+        {
+            private static Random randomNumber = new Random();
+
+            public static bool IsCriticalHit()
+            {
+                return randomNumber.NextDouble() < 0.15; // 0~1미만의 실수를 무작위 생성해서 0.15보다 작으면 치명타 판정 (기본공격, 스킬공격에 적용)
+            }
+
+            public static bool IsMiss()
+            {
+                return randomNumber.NextDouble() < 0.10; // 0~1미만의 실수를 무작위 생성해서 0.10보다 작으면 회피 판정 ('기본공격'에만 적용)
+            }
+        }
+
         public void TakeDamage(int damage)
         {
             int actualDamage = Math.Max(damage - DEF, 0); // 방어력을 고려한 데미지 계산
             CurrentHP = Math.Max(CurrentHP - actualDamage, 0); // HP는 0 이하로 내려가지 않음
             Console.WriteLine($"{Name}이(가) {actualDamage}의 피해를 입었습니다. 남은 HP: {CurrentHP}");
+        }
+
+        public int TakeCriticalDamage(int Damage)
+        {
+            int baseDamage = Math.Max(Damage - DEF, 0);
+            int criticalDamage = (int)(baseDamage * 1.6f); // 방어력을 고려한 데미지 계산
+            CurrentHP = Math.Max(CurrentHP - criticalDamage, 0); // HP는 0 이하로 내려가지 않음
+            Console.WriteLine($"{Name}이(가) {criticalDamage}의 피해를 입었습니다. 남은 HP: {CurrentHP}");
+            return criticalDamage;
         }
 
         public bool IsDead()

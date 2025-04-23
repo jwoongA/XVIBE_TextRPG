@@ -5,6 +5,7 @@ using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 using System.Transactions;
+using static XVIBE_TextRPG.Enemy;
 
 namespace XVIBE_TextRPG
 {
@@ -43,7 +44,7 @@ namespace XVIBE_TextRPG
             ShowEnterMessage();
             StartDungeon();
         }
-
+        
         // 던전 시작 메서드
         public void StartDungeon()
         {
@@ -173,15 +174,27 @@ namespace XVIBE_TextRPG
         // 기본 공격 메서드
         private void BasicAttack(Enemy target)
         {
+            int damage = Player.GetCurrentATK();
+
             if (target.IsDead())
             {
                 Console.WriteLine($"{target.Name}은(는) 이미 쓰러졌습니다.");
                 return;
             }
-
-            int damage = Player.GetCurrentATK(); // 공버프를 고려한 현재 공격력으로 계산
-            target.TakeDamage(damage);
-            battleLog.Add($"플레이어가 {target.Name}에게 {damage}의 피해를 입혔습니다.");
+            else if(Combat.IsMiss())
+            {
+                battleLog.Add($"{target.Name}을(를) 공격했지만 아무일도 일어나지 않았습니다....");
+            }
+            else if (Combat.IsCriticalHit()) // 조건문 걸어서 치명타 터지는 상황 아닌 상황 나누기
+            {
+                int criticalDamage = target.TakeCriticalDamage(damage);// 몬스터에게 치명타 데미지 피해
+                battleLog.Add($"플레이어가 {target.Name}에게 {criticalDamage}의 [치명타] 피해를 입혔습니다!!!");
+            }
+            else
+            {
+                target.TakeDamage(damage); // 일반 공격
+                battleLog.Add($"플레이어가 {target.Name}에게 {damage}의 피해를 입혔습니다.");
+            }
         }
 
         // 스킬 사용 메서드
@@ -215,12 +228,19 @@ namespace XVIBE_TextRPG
 
             foreach (var monster in monsters)
             {
-                if (!monster.IsDead())
+                if(monster.IsDead())
+                {
+                    continue;   // 몬스터가 죽으면 그냥 진행해라
+                }
+                else if(Combat.IsMiss()) // 10퍼센트 확률로 회피하는 경우 회피 판정해라
+                {
+                    battleLog.Add($"플레이어가 {monster.Name}의 공격을 [회피]했습니다!");
+                }
+                else if (!monster.IsDead()) // 죽지도 않고 회피 판정도 필요없으면 데미지를 추가해라!
                 {
                     totalDamage += monster.ATK;
                 }
             }
-
             Player.CurrentHP = Math.Max(Player.CurrentHP - totalDamage, 0);
             battleLog.Add($"몬스터들이 공격하여 플레이어가 {totalDamage}의 피해를 입었습니다. 남은 HP: {Player.CurrentHP}");
         }

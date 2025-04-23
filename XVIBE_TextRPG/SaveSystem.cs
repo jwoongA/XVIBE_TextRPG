@@ -17,7 +17,7 @@ namespace XVIBE_TextRPG
         {
             string json = JsonConvert.SerializeObject(data, Formatting.Indented); //GameData 클래스 객체에 Json 문자열로 변환 후 json 변수에 담기
             File.WriteAllText(savePath, json);
-            Console.WriteLine("저장 완료!");
+            Console.WriteLine("[저장 완료]");
         }
 
         public static GameData Load()
@@ -50,6 +50,7 @@ namespace XVIBE_TextRPG
 
             do
             {
+                Console.Clear();
                 Console.WriteLine("저장된 게임을 불러오시겠습니까? (y = 불러오기 / n = 새 게임");
                 choice = Console.ReadLine();
 
