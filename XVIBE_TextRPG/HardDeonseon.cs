@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 
 namespace XVIBE_TextRPG
 {
-    internal class EasyDeonseon
+    internal class HardDeonseon
     {
         private List<Enemy> monsters; // 몬스터 리스트
         private List<string> battleLog; // 배틀 로그 리스트
 
-        public EasyDeonseon()
+        public HardDeonseon()
         {
             // 몬스터 생성
             monsters = GenerateMonsters();
@@ -27,9 +27,9 @@ namespace XVIBE_TextRPG
             var random = new Random();
             var monsterList = new List<Enemy>();
 
-            for (int i = 0; i < 3; i++) // 3마리 생성
+            for (int i = 0; i < 5; i++) // 5마리 생성
             {
-                int type = random.Next(0, 3); // 0~2 타입 랜덤 생성
+                int type = random.Next(3, 5); // 3~4 타입 랜덤 생성
                 int level = random.Next(1, 4); // 1~3 레벨 랜덤 생성
                 monsterList.Add(new Enemy(type, level));
             }
@@ -40,7 +40,7 @@ namespace XVIBE_TextRPG
         // 던전 시작 메서드
         private void StartDungeon()
         {
-            Console.WriteLine("초급 던전에 입장했습니다!");
+            Console.WriteLine("고급 던전에 입장했습니다!");
 
             while (true)
             {
