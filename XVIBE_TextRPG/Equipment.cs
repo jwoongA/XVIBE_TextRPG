@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace XVIBE_TextRPG
 {
-    internal class Equipment
+    public class Equipment
     {
         public static int ATKBonus { get; set; } = 0;
         public static int DEFBonus { get; set; } = 0;

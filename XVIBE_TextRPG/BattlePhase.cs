@@ -24,7 +24,9 @@ namespace XVIBE_TextRPG
                     Console.WriteLine("초급 던전으로 입장합니다.");
                     if(Player.CurrentHP == 0)
                     {
-                        Console.WriteLine("체력이 부족하여 던전에 입장할 수 없습니다.");
+                        Console.WriteLine("체력이 부족하여 던전에 입장할 수 없습니다.\n");
+                        Console.WriteLine("계속하려면 Enter를 누르세요...");
+                        Console.ReadLine(); // 멈춰줌
                         return;
                     }
                     Console.WriteLine("던전 입장 중...");
@@ -36,7 +38,9 @@ namespace XVIBE_TextRPG
                     Console.WriteLine("중급 던전으로 입장합니다.");
                     if (Player.CurrentHP == 0)
                     {
-                        Console.WriteLine("체력이 부족하여 던전에 입장할 수 없습니다.");
+                        Console.WriteLine("체력이 부족하여 던전에 입장할 수 없습니다.\n");
+                        Console.WriteLine("계속하려면 Enter를 누르세요...");
+                        Console.ReadLine(); // 멈춰줌
                         return;
                     }
                     Console.WriteLine("던전 입장 중...");
@@ -48,7 +52,9 @@ namespace XVIBE_TextRPG
                     Console.WriteLine("고급 던전으로 입장합니다.");
                     if (Player.CurrentHP == 0)
                     {
-                        Console.WriteLine("체력이 부족하여 던전에 입장할 수 없습니다.");
+                        Console.WriteLine("체력이 부족하여 던전에 입장할 수 없습니다.\n");
+                        Console.WriteLine("계속하려면 Enter를 누르세요...");
+                        Console.ReadLine(); // 멈춰줌
                         return;
                     }
                     Console.WriteLine("던전 입장 중...");

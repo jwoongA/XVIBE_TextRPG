@@ -3,9 +3,9 @@ using System.Collections.Generic;
 
 namespace XVIBE_TextRPG
 {
-    internal class Shop
+    public class Shop
     {
-        static List<Equipment.Weapon> storeWeapons = new List<Equipment.Weapon>()
+        public static List<Equipment.Weapon> storeWeapons = new List<Equipment.Weapon>()
         {
             new Equipment.Weapon("강철 검", Equipment.WeaponType.Sword, 10, 100),
             new Equipment.Weapon("은 단검", Equipment.WeaponType.Dagger, 7, 80),
