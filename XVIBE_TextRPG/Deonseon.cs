@@ -5,6 +5,7 @@ using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 using System.Transactions;
+using static XVIBE_TextRPG.Enemy;
 
 namespace XVIBE_TextRPG
 {
@@ -43,7 +44,7 @@ namespace XVIBE_TextRPG
             ShowEnterMessage();
             StartDungeon();
         }
-
+        
         // 던전 시작 메서드
         public void StartDungeon()
         {
@@ -160,15 +161,24 @@ namespace XVIBE_TextRPG
         // 기본 공격 메서드
         private void BasicAttack(Enemy target)
         {
+            int damage = Player.GetCurrentATK();
+
             if (target.IsDead())
             {
                 Console.WriteLine($"{target.Name}은(는) 이미 쓰러졌습니다.");
                 return;
             }
-
-            int damage = Player.GetCurrentATK(); // 공버프를 고려한 현재 공격력으로 계산
-            target.TakeDamage(damage);
-            battleLog.Add($"플레이어가 {target.Name}에게 {damage}의 피해를 입혔습니다.");
+            else if (Combat.IsCriticalHit() == true) // 조건문 걸어서 치명타 터지는 상황 아닌 상황 나누기
+            {
+                int criticalDamage = target.TakeCriticalDamage(damage);
+                target.TakeCriticalDamage(damage); // 몬스터에게 치명타 데미지 피해
+                battleLog.Add($"플레이어가 {target.Name}에게 {criticalDamage}의 [치명타] 피해를 입혔습니다!!!");
+            }
+            else
+            {
+                target.TakeDamage(damage); // 일반 공격
+                battleLog.Add($"플레이어가 {target.Name}에게 {damage}의 피해를 입혔습니다.");
+            }
         }
 
         // 스킬 사용 메서드
