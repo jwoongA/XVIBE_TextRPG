@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace XVIBE_TextRPG
 {
-    internal class Enemy
+    public class Enemy
     {
         public string Name { get; private set; }
         public int Type { get; private set; } // 적의 타입
