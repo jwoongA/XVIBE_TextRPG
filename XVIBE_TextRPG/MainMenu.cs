@@ -23,6 +23,8 @@ namespace XVIBE_TextRPG
                 Console.WriteLine("3. 상점");
                 Console.WriteLine("4. 던전 입장");
                 Console.WriteLine("0. 종료하기");
+                Console.WriteLine("8. 게임 데이터 저장");
+                Console.WriteLine("9. 게임 데이터 삭제");
                 Console.WriteLine();
                 Console.WriteLine("원하시는 행동을 입력해주세요.");
                 Console.Write(">> ");
@@ -49,10 +51,20 @@ namespace XVIBE_TextRPG
                     case "0":
                         Console.WriteLine("게임을 종료합니다.");
                         return; // 프로그램 종료
+                    case "8": // 게임 저장 (8말고 다른숫자나 기호 사용해도 무방합니다)
+                        Player.SavePlayerData();
+                        Console.WriteLine("Enter 키를 눌러주세요.");
+                        Console.ReadLine();
+                        break;
+                    case "9": // 저장 데이터 삭제 (9 말고 다른숫자나 기호 사용해도 무방합니다)
+                        SaveSystem.DeleteSave();
+                        Console.WriteLine("Enter 키를 눌러주세요.");
+                        Console.ReadLine();
+                        break;
                     default:
                         Console.WriteLine("잘못된 입력입니다.");
-                        Console.WriteLine("아무 키나 눌러주세요.");
-                        Console.ReadKey();
+                        Console.WriteLine("Enter 키를 눌러주세요.");
+                        Console.ReadLine();
                         break;
                 }
             }
