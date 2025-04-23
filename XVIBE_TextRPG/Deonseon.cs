@@ -168,10 +168,9 @@ namespace XVIBE_TextRPG
                 Console.WriteLine($"{target.Name}은(는) 이미 쓰러졌습니다.");
                 return;
             }
-            else if (Combat.IsCriticalHit() == true) // 조건문 걸어서 치명타 터지는 상황 아닌 상황 나누기
+            else if (Combat.IsCriticalHit()) // 조건문 걸어서 치명타 터지는 상황 아닌 상황 나누기
             {
-                int criticalDamage = target.TakeCriticalDamage(damage);
-                target.TakeCriticalDamage(damage); // 몬스터에게 치명타 데미지 피해
+                int criticalDamage = target.TakeCriticalDamage(damage);// 몬스터에게 치명타 데미지 피해
                 battleLog.Add($"플레이어가 {target.Name}에게 {criticalDamage}의 [치명타] 피해를 입혔습니다!!!");
             }
             else
