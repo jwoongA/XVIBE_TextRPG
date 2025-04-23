@@ -270,11 +270,14 @@ namespace XVIBE_TextRPG
         public void BattleVictory()
         {
             GetRewards(); // 클리어 보상 호출
-            Console.WriteLine("[알림] 전투 승리 메서드는 아직 구현되지 않았습니다.");
+            Console.WriteLine(new string('-', 40)); // 구분선
+            Console.WriteLine("[전투승리!]");
+            Console.WriteLine();
+            Console.WriteLine($"보상으로 {GetGoldReward()} G를 획득했습니다.");
             Console.WriteLine("아무 키나 눌러주세요.");
             Console.ReadLine();
         }
-
+        
         // 전투 패배 메서드
         public void BattleDefeat()
         {
