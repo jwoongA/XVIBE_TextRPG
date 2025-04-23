@@ -259,7 +259,7 @@ namespace XVIBE_TextRPG
         // 경험치 획득 메서드
         public void GetExperience(Enemy Deadmonster)
         {
-            Player.Exp += Deadmonster.Level;
+            Player.Exp += Deadmonster.Exp;
         }
     }
 
