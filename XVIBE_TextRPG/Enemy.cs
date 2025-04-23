@@ -15,7 +15,9 @@ namespace XVIBE_TextRPG
         public int CurrentHP { get; private set; }
         public int ATK { get; private set; } // 공격력
         public int DEF { get; private set; } // 방어력
-
+        public int Exp { get; private set; } // 적이 주는 경험치
+        public bool Dead { get; private set; } // 적이 죽었는가
+        public bool NotGetExperience { get; set; } // 경험치를 주었는가
         public Enemy(int type, int level)
         {
             Type = type;
@@ -29,40 +31,48 @@ namespace XVIBE_TextRPG
                     MaxHP = 15 + (level * 1);
                     ATK = 5 + level;
                     DEF = 1;
+                    Exp = level;
                     break;
                 case 1: // 대포미니언
                     Name = "대포미니언";
                     MaxHP = 15 + (level * 2);
                     ATK = 10 + level;
                     DEF = 2;
+                    Exp = level + 1;
                     break;
                 case 2: // 공허충
                     Name = "공허충";
                     MaxHP = 10;
                     ATK = 10 + (level * 3);
                     DEF = 0;
+                    Exp = level + 2;
                     break;
                 case 3: // 중급 몬스터
                     Name = "중급 몬스터";
                     MaxHP = 50 + (level * 5);
                     ATK = 15 + (level * 2);
                     DEF = 5;
+                    Exp = level + 3;
                     break;
                 case 4: // 고급 몬스터
                     Name = "고급 몬스터";
                     MaxHP = 100 + (level * 10);
                     ATK = 30 + (level * 3);
                     DEF = 10;
+                    Exp = level + 4;
                     break;
                 default:
                     Name = "알 수 없는 몬스터";//예외 처리
                     MaxHP = 10;
                     ATK = 0;
                     DEF = 0;
+                    Exp = 0;
                     break;
             }
 
             CurrentHP = MaxHP; // 현재 HP는 최대 HP로 초기화
+            Dead = false; // 처음엔 살아있음
+            NotGetExperience = false; // 경험치 미지급
         }
 
         public static class Combat // 전투시 확률이 필요할때 난수 생성하는 메서드
@@ -98,6 +108,11 @@ namespace XVIBE_TextRPG
 
         public bool IsDead()
         {
+            if(CurrentHP <= 0)
+            {
+                Dead = true; // 적이 죽었다 
+            }
+
             return CurrentHP <= 0;
         }
     }
