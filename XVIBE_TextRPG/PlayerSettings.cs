@@ -15,6 +15,7 @@ namespace XVIBE_TextRPG
             ChooseJob();     // 직업 선택
 
             Console.WriteLine($"직업 선택이 완료되었습니다.{Player.Name}님의 직업은 {Player.Job}입니다.");
+            Player.SavePlayerData();
             Thread.Sleep(2000);
         }
         public static string SetPlayerName()

@@ -143,6 +143,43 @@ namespace XVIBE_TextRPG
             Console.WriteLine("\n아무 키나 누르면 이전 화면으로 돌아갑니다.");
             Console.ReadLine();
         }
+
+        // 플레이어 정보 data 에 저장
+        public static void SavePlayerData()
+        {
+            GameData data = new GameData
+            {
+                Name = Player.Name,
+                Job = Player.Job,
+                Exp = Player.Exp,
+                Level = Player.Level,
+                Gold = Player.Gold,
+                MaxHP = Player.MaxHP,
+                CurrentHP = Player.CurrentHP,
+                MaxMP = Player.MaxMP,
+                CurrentMP = Player.CurrentMP,
+                TotalATK = Player.TotalATK,
+                TotalDEF = Player.TotalDEF
+            };
+
+            SaveSystem.Save(data);
+        }
+
+        // data 에 있는 정보 플레이어에게 전달
+        public static void LoadPlayerData(GameData data)
+        {
+            Name = data.Name;
+            Job = data.Job;
+            Exp = data.Exp;
+            Level = data.Level;
+            Gold = data.Gold;
+            MaxHP = data.MaxHP;
+            CurrentHP = data.CurrentHP;
+            MaxMP = data.MaxMP;
+            CurrentMP = data.CurrentMP;
+            TotalATK = data.TotalATK;
+            TotalDEF = data.TotalDEF;
+        }
     }
 
 }
