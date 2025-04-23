@@ -15,7 +15,8 @@ namespace XVIBE_TextRPG
         public int CurrentHP { get; private set; }
         public int ATK { get; private set; } // 공격력
         public int DEF { get; private set; } // 방어력
-
+        public bool Dead { get; private set; } // 적이 죽었는가
+        public bool NotGetExperience { get; set; } // 경험치를 주었는가
         public Enemy(int type, int level)
         {
             Type = type;
@@ -63,6 +64,8 @@ namespace XVIBE_TextRPG
             }
 
             CurrentHP = MaxHP; // 현재 HP는 최대 HP로 초기화
+            Dead = false; // 처음엔 살아있음
+            NotGetExperience = false; // 경험치 미지급
         }
 
         public void TakeDamage(int damage)
@@ -74,6 +77,11 @@ namespace XVIBE_TextRPG
 
         public bool IsDead()
         {
+            if(CurrentHP <= 0)
+            {
+                Dead = true; // 적이 죽었다 
+            }
+
             return CurrentHP <= 0;
         }
     }

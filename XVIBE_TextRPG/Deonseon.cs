@@ -114,6 +114,19 @@ namespace XVIBE_TextRPG
                 // 배틀 로그 출력
                 DisplayBattleLog();
 
+                // 경험치 획득
+                foreach(var monster in monsters)
+                {
+                    if (monster.Dead) // 적이 죽었을 경우
+                    {
+                        if(!monster.NotGetExperience) // 경험치 지급을 안 했을경우
+                        {
+                            GetExperience(monster);
+                            monster.NotGetExperience = true; // 경험치 지급 (O)
+                        }
+                    }    
+                }
+
                 // 전투 결과 확인
                 if (Player.CurrentHP <= 0 && monsters.TrueForAll(m => m.IsDead()))
                 {
@@ -210,7 +223,6 @@ namespace XVIBE_TextRPG
 
             Player.CurrentHP = Math.Max(Player.CurrentHP - totalDamage, 0);
             battleLog.Add($"몬스터들이 공격하여 플레이어가 {totalDamage}의 피해를 입었습니다. 남은 HP: {Player.CurrentHP}");
-
         }
 
         // 배틀 로그 출력
@@ -226,7 +238,6 @@ namespace XVIBE_TextRPG
             Console.WriteLine(new string('-', 40)); // 구분선
             Console.WriteLine("아무 키나 눌러 다음 턴으로 진행하세요...");
             Console.ReadLine();
-
         }
 
         // 전투 승리 메서드
@@ -245,6 +256,11 @@ namespace XVIBE_TextRPG
             Console.ReadLine();
         }
 
+        // 경험치 획득 메서드
+        public void GetExperience(Enemy Deadmonster)
+        {
+            Player.Exp += Deadmonster.Level;
+        }
     }
 
     public class EasyDeonseon : Deonseon // 초급 던전
