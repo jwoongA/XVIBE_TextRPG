@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
@@ -54,6 +56,9 @@ namespace XVIBE_TextRPG
         // 던전 시작 메서드
         public void StartDungeon()
         {
+            // 전투 시작 직전 경험치 저장
+            expBeforeBattle = Player.Exp;
+
             if (monsters == null || monsters.Count == 0)
             {
                 Console.WriteLine("에러: 몬스터가 생성되지 않았습니다.");
@@ -269,25 +274,61 @@ namespace XVIBE_TextRPG
             Console.ReadLine();
         }
 
+        // 전투 시작 시 경험치 저장
+        private int expBeforeBattle = 0;
+
         // 전투 승리 메서드
         public void BattleVictory()
         {
             GetRewards(); // 클리어 보상 호출
 
+            int expGained = Player.Exp - expBeforeBattle; // 던전에서 얻은 경험치 계산
+
             Console.WriteLine(new string('-', 40)); // 구분선
-            Console.WriteLine("[전투승리!]");
+            Console.WriteLine(@"
+ ___      ___ ___  ________ _________  ________  ________      ___    ___ ___       
+|\  \    /  /|\  \|\   ____\\___   ___\\   __  \|\   __  \    |\  \  /  /|\  \      
+\ \  \  /  / | \  \ \  \___\|___ \  \_\ \  \|\  \ \  \|\  \   \ \  \/  / | \  \     
+ \ \  \/  / / \ \  \ \  \       \ \  \ \ \  \\\  \ \   _  _\   \ \    / / \ \  \    
+  \ \    / /   \ \  \ \  \____   \ \  \ \ \  \\\  \ \  \\  \|   \/  /  /   \ \__\   
+   \ \__/ /     \ \__\ \_______\  \ \__\ \ \_______\ \__\\ _\ __/  / /      \|__|   
+    \|__|/       \|__|\|_______|   \|__|  \|_______|\|__|\|__|\___/ /           ___ 
+                                                             \|___|/           |\__\
+                                                                               \|__|
+                                                                                    
+");
             Console.WriteLine();
             Console.WriteLine($"보상으로 {GetGoldReward()} G를 획득했습니다.");
-            Console.WriteLine("아무 키나 눌러주세요.");
+            Console.WriteLine($"경험치 {expGained}를 획득했습니다.");
+            Player.SavePlayerData();
+            Console.WriteLine();
+            Console.WriteLine("Enter 키를 눌러주세요.");
             Console.ReadLine();
         }
-        
+
         // 전투 패배 메서드
         public void BattleDefeat()
         {
-            Console.WriteLine("[알림] 전투 패배 메서드는 아직 구현되지 않았습니다.");
-            Console.WriteLine("아무 키나 눌러주세요.");
+            Thread.Sleep(1000);
+            Console.Clear();
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine(@"
+ ________  ________  _____ ______   _______           ________  ___      ___ _______   ________     
+|\   ____\|\   __  \|\   _ \  _   \|\  ___ \         |\   __  \|\  \    /  /|\  ___ \ |\   __  \    
+\ \  \___|\ \  \|\  \ \  \\\__\ \  \ \   __/|        \ \  \|\  \ \  \  /  / | \   __/|\ \  \|\  \   
+ \ \  \  __\ \   __  \ \  \\|__| \  \ \  \_|/__       \ \  \\\  \ \  \/  / / \ \  \_|/_\ \   _  _\  
+  \ \  \|\  \ \  \ \  \ \  \    \ \  \ \  \_|\ \       \ \  \\\  \ \    / /   \ \  \_|\ \ \  \\  \| 
+   \ \_______\ \__\ \__\ \__\    \ \__\ \_______\       \ \_______\ \__/ /     \ \_______\ \__\\ _\ 
+    \|_______|\|__|\|__|\|__|     \|__|\|_______|        \|_______|\|__|/       \|_______|\|__|\|__|                                                                                                    
+");
+            Console.ResetColor();
+            Console.WriteLine();
+            Console.WriteLine($"{Player.Name}님은 힘이 다해 쓰러졌습니다.");
+            Console.WriteLine($"처음 마을에 도착했을 때로 회귀합니다.");
+            Console.WriteLine();
+            Console.WriteLine("Enter 키를 눌러 계속하세요.");
             Console.ReadLine();
+            Player.ResetAfterDeath();
         }
 
         // 경험치 획득 메서드

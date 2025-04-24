@@ -20,10 +20,11 @@ namespace XVIBE_TextRPG
 
         public static int Gold { get; set; } = 1500; // 플레이어 골드
 
-        public static int MaxHP { get; set; } = 100; // 직업에 따라 결정되도록 수정 필요
+        public static int MaxHP { get; set; } = 100; 
         public static int CurrentHP { get; set; } = MaxHP;
-        public static int MaxMP { get; set; } = 50; // 직업에 따라 결정되도록 수정 필요
+        public static int MaxMP { get; set; } = 50; 
         public static int CurrentMP { get; set; } = MaxMP;
+
         public static float TotalATK { get; set; } = 10; // 장비와 레벨에 따라 결정되도록 수정 필요
         public static int TotalDEF { get; set; } = 5; // 장비와 레벨에 따라 결정되도록 수정 필요
 
@@ -253,7 +254,8 @@ namespace XVIBE_TextRPG
 
             UpdateStats();
         }
-        public void ResstAfterDeath()
+
+        public static void ResetAfterDeath()
         {
             //레벨, 경험치, 골드 초기화
             Level = 1;
@@ -271,8 +273,6 @@ namespace XVIBE_TextRPG
             // 체력, 마나는 최대치로 회복
             CurrentHP = MaxHP;
             CurrentMP = MaxMP;
-
-            Console.WriteLine();
         }
 
         // 레벨업
