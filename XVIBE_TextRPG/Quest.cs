@@ -202,11 +202,6 @@ namespace XVIBE_TextRPG
             Console.Clear();
             Console.WriteLine($"[{quest.QuestName}]\n");
             Console.WriteLine($"{quest.Description}");
-            Console.WriteLine($"\n- 보상: 골드 {quest.RewardGold}, 경험치 {quest.RewardExp}");
-            if (quest.RewardWeapon != null)
-            {
-                Console.WriteLine($"- 장비 보상: {quest.RewardWeapon.Name} x{quest.RewardWeapon_Count}");
-            }
 
             if (quest.RequiredKillCount > 0)
             { Console.WriteLine($"\n※ 달성 조건: 몬스터 처치 {quest.CurrentKillCount} / {quest.RequiredKillCount}"); }
@@ -222,6 +217,14 @@ namespace XVIBE_TextRPG
 
             if (quest.Required_Level > 0)
             { Console.WriteLine($"\n※ 달성 조건: 레벨 {Player.Level} / {quest.Required_Level}"); }
+
+
+
+            Console.WriteLine($"\n- 보상: 골드 {quest.RewardGold}, 경험치 {quest.RewardExp}");
+            if (quest.RewardWeapon != null)
+            {
+                Console.WriteLine($"- 장비 보상: {quest.RewardWeapon.Name} x{quest.RewardWeapon_Count}");
+            }
 
 
             Console.WriteLine("\n아무 키나 누르면 퀘스트 목록으로 돌아갑니다.");
