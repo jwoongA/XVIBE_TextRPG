@@ -127,7 +127,7 @@ namespace XVIBE_TextRPG
                 DisplayBattleLog();
 
                 // 경험치 획득
-                foreach(var monster in monsters)
+                foreach (var monster in monsters)
                 {
                     if (monster.Dead) // 적이 죽었을 경우
                     {
@@ -138,6 +138,9 @@ namespace XVIBE_TextRPG
                         }
                     }    
                 }
+
+                // 레벨업
+                Player.LvUp(); 
 
                 // 전투 결과 확인
                 if (Player.CurrentHP <= 0 && monsters.TrueForAll(m => m.IsDead()))
@@ -185,7 +188,7 @@ namespace XVIBE_TextRPG
         // 기본 공격 메서드
         private void BasicAttack(Enemy target)
         {
-            int damage = Player.GetCurrentATK();
+            float damage = Player.GetCurrentATK();
 
             if (target.IsDead())
             {
@@ -198,12 +201,12 @@ namespace XVIBE_TextRPG
             }
             else if (Combat.IsCriticalHit()) // 조건문 걸어서 치명타 터지는 상황 아닌 상황 나누기
             {
-                int criticalDamage = target.TakeCriticalDamage(damage);// 몬스터에게 치명타 데미지 피해
+                int criticalDamage = target.TakeCriticalDamage((int)damage);// 몬스터에게 치명타 데미지 피해
                 battleLog.Add($"플레이어가 {target.Name}에게 {criticalDamage}의 [치명타] 피해를 입혔습니다!!!");
             }
             else
             {
-                target.TakeDamage(damage); // 일반 공격
+                target.TakeDamage((int)damage); // 일반 공격
                 battleLog.Add($"플레이어가 {target.Name}에게 {damage}의 피해를 입혔습니다.");
             }
         }
