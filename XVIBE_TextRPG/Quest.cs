@@ -13,10 +13,10 @@ using System.Threading.Tasks;
  * - 퀘스트 상세 정보 출력 기능
  * - 퀘스트 수락/거절 시스템
  * - 퀘스트 진행 중 목록 보기 기능
- * 
- * [작성해야 하는 것들]
  * - 퀘스트 진행 조건 자동 체크 기능
  * - 퀘스트 보상 지급 처리
+ * 
+ * [작성해야 하는 것들]
  * - 플레이어 행동과 연동하여 퀘스트 조건 달성 확인 기능 기존 코드에 적용하기
  * - 퀘스트 상태 저장/로드 기능
 */
@@ -36,7 +36,7 @@ namespace XVIBE_TextRPG
 
         // [조건]
         public int RequiredKillCount; // 필요 몬스터 처치 수 (조건)
-        public int CurrentKillCount; // 현재 처치한 몬스터
+        public static int CurrentKillCount; // 현재 처치한 몬스터
         public int Required_Level; // 필요 레벨
         public int Required_TotalAtk; // 필요 공격력
         public int Required_TotalDef; // 필요 방어력
@@ -65,7 +65,6 @@ namespace XVIBE_TextRPG
                     QuestName = "마을을 위협하는 몬스터 처치",
                     Description = "이봐! 마을 근처에 몬스터들이 너무 많아졌다고 생각하지 않나? \n마을주민들의 안전을 위해서라도 저것들 수를 좀 줄여야 한다고! \n모험가인 자네가 좀 처치해주게!",
                     RequiredKillCount = 5, // 아무 몬스터나 5마리 처치하면 퀘스트 클리어
-                    CurrentKillCount = 0,
                     RewardGold = 300,
                     RewardExp = 200,
                     RewardWeapon = Shop.storeWeapons[0], // 강철검을 보상으로 준다
@@ -190,14 +189,6 @@ namespace XVIBE_TextRPG
                 
             }
         }
-        public void  ResetIfRepeatable() // 반복 가능 퀘스트 초기화 함수
-        {
-            if (IsRepeatable && Status == QuestStatus.Completed) // 반복가능하고 완료한 퀘스트의 경우에는
-            {
-                Status = QuestStatus.NotAccepted; // 퀘스트의 상태를 미수락 상태로 리셋한다
-                CurrentKillCount = 0; // 현재 처치한 몬스터도 초기화한다
-            }
-        }
 
         public static void ShowQuestDetail(Quest quest) // 퀘스트 상세 보기 함수
         {
@@ -207,7 +198,7 @@ namespace XVIBE_TextRPG
             Console.WriteLine($"{quest.Description}");
 
             if (quest.RequiredKillCount > 0)
-            { Console.WriteLine($"\n※ 달성 조건: 몬스터 처치 {quest.CurrentKillCount} / {quest.RequiredKillCount}"); }
+            { Console.WriteLine($"\n※ 달성 조건: 몬스터 처치 {CurrentKillCount} / {quest.RequiredKillCount}"); }
             // CurrentKillCount는 실시간 연동 가능하게 로직 만들어야함
 
             // 장비 장착 퀘스트는 아직 구현 안되어서 나중에 추가해야함
@@ -272,7 +263,8 @@ namespace XVIBE_TextRPG
                     string input = Console.ReadLine().Trim().ToUpper();
                     if (input == "Y")
                     {
-                        quest.ResetIfRepeatable(); // 다시 수락하도록 리셋함
+                        quest.Status = QuestStatus.NotAccepted; // 퀘스트의 상태를 미수락 상태로 리셋한다
+                        CurrentKillCount = 0; // 현재 처치한 몬스터도 초기화한다
                         Console.WriteLine("\n해당 퀘스트를 다시 수락하여 진행합니다!");
                     }
                     else
@@ -301,7 +293,6 @@ namespace XVIBE_TextRPG
                     Console.ForegroundColor = ConsoleColor.Yellow;
                     Console.WriteLine($"\n*** 퀘스트 완료 ***\n{quest.QuestName}"); // 가독성 있게 노란색으로 표시!
                     Console.ResetColor();
-
                 }
             }
         }
@@ -331,6 +322,7 @@ namespace XVIBE_TextRPG
                     Console.WriteLine($"+ {quest.RewardWeapon.Name} ×{quest.RewardWeapon_Count} 획득!");
                 }
                 Console.ResetColor();
+                quest.Status = QuestStatus.Completed;
             }
             else
             {
@@ -339,9 +331,5 @@ namespace XVIBE_TextRPG
                 Console.ReadLine();
             }
         }
-
-
-
     }
-
 }
