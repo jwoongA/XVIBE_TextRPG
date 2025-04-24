@@ -47,12 +47,26 @@ namespace XVIBE_TextRPG
         public Equipment.Weapon RewardWeapon; // 장비보상 무기
         public int RewardWeapon_Count; // 보상 무기 수량
 
-        public bool IsCompleted => // IsCompleted는 퀘스트 조건을 만족하면 true를 반환한다는 람다식
-            (CurrentKillCount >= RequiredKillCount) ||
-            (Required_Level > 0 && Player.Level >= Required_Level) ||
-            (Required_TotalAtk > 0 && Player.TotalATK >= Required_TotalAtk) ||
-            (Required_TotalDef > 0 && Player.TotalDEF >= Required_TotalDef); 
-        
+        public bool IsCompleted
+        {
+            get
+            {
+                if (RequiredKillCount > 0 && CurrentKillCount >= RequiredKillCount)
+                    return true;
+
+                if (Required_Level > 0 && Player.Level >= Required_Level)
+                    return true;
+
+                if (Required_TotalAtk > 0 && Player.TotalATK >= Required_TotalAtk)
+                    return true;
+
+                if (Required_TotalDef > 0 && Player.TotalDEF >= Required_TotalDef)
+                    return true;
+
+                return false;
+            }
+        }
+
         public class QuestManager
         {
              // 퀘스트 정보 및 보상을 정리하는 리스트

@@ -358,6 +358,7 @@ namespace XVIBE_TextRPG
         {
             Player.Exp += Deadmonster.Exp;
             totalExpGained += Deadmonster.Exp; // 경험치 누적 저장
+            Quest.CheckQuestConditions();
         }
 
         // 각 던전별로 골드 보상액을 다르게 설정
