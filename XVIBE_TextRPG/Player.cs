@@ -254,8 +254,6 @@ namespace XVIBE_TextRPG
             UpdateStats();
         }
 
-        public void ResstAfterDeath()
-
         public static void ResetAfterDeath()
         {
             //레벨, 경험치, 골드 초기화
