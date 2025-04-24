@@ -12,6 +12,13 @@ namespace XVIBE_TextRPG
             new Equipment.Weapon("마법 지팡이", Equipment.WeaponType.Staff, 12, 150),
         };
 
+        public static List<Equipment.Armor> storeArmors = new List<Equipment.Armor>()
+        {
+            new Equipment.Armor("판금 갑옷", Equipment.ArmorType.Metal, 6, 100),
+            new Equipment.Armor("가죽 조끼", Equipment.ArmorType.Leather, 4, 80),
+            new Equipment.Armor("마법사의 로브", Equipment.ArmorType.Robe, 2, 150),
+        };
+
         public static void EnterShop()
         {
             while (true)

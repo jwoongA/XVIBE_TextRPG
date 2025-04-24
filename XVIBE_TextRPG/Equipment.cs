@@ -11,12 +11,15 @@ namespace XVIBE_TextRPG
         // 무기 타입 정의
         public enum WeaponType { Sword, Dagger, Staff }
 
+        // 방어구 타입 정의
+        public enum ArmorType { Metal, Leather, Robe }
+
         // 무기 클래스 정의
         public class Weapon
         {
             public string Name { get; }
             public WeaponType Type { get; }
-            public int ATK { get; }
+            public int ATK { get; }            
             public int Price { get; }
 
             public Weapon(string name, WeaponType type, int atk, int price)
@@ -47,9 +50,40 @@ namespace XVIBE_TextRPG
             }
         }
 
+        
+
+        // 방어구 클래스 정의
+        public class Armor
+        {
+            public string Name { get; }
+            public ArmorType Type { get; }
+            public int DEF { get; }
+            public int Price { get; }
+
+            public Armor(string name, ArmorType type, int dEF, int price)
+            {
+                Name = name;
+                Type = type;
+                DEF = dEF;
+                Price = price;
+            }
+
+            public override string ToString()
+            {
+                return $"{Name} (방어력: {DEF}, 가격: {Price})";
+            }
+
+            public override int GetHashCode()
+            {
+                return HashCode.Combine(Name, Type, DEF, Price);
+            }
+        }
+
         // 인벤토리와 장비
         public static List<Weapon> Inventory = new List<Weapon>();
         public static Weapon EquippedWeapon = null;
+        public static List<Armor> ArmorInventory = new List<Armor>();
+        public static Armor EquippedArmor = null;
 
         // 무기 장착
         public static void Equip(Weapon weapon)
