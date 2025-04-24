@@ -31,6 +31,20 @@ namespace XVIBE_TextRPG
             {
                 return $"{Name} (공격력: {ATK}, 가격: {Price}G)";
             }
+
+            public override bool Equals(object obj)
+            {
+                if (obj is Weapon other)
+                {
+                    return Name == other.Name && Type == other.Type && ATK == other.ATK && Price == other.Price ;
+                }
+                return false ;
+            }
+
+            public override int GetHashCode()
+            {
+                return HashCode.Combine(Name, Type, ATK, Price);
+            }
         }
 
         // 인벤토리와 장비
@@ -40,7 +54,7 @@ namespace XVIBE_TextRPG
         // 무기 장착
         public static void Equip(Weapon weapon)
         {
-            if (EquippedWeapon == weapon)
+            if (EquippedWeapon != null && weapon.Equals(EquippedWeapon)) // 저장하고 불러왔을 때 참조가 달라 객체 비교로 변경
             {
                 Console.WriteLine($"{weapon.Name}은(는) 이미 장착되어 있습니다!");
                 return;
@@ -87,7 +101,7 @@ namespace XVIBE_TextRPG
                     for (int i = 0; i < Inventory.Count; i++)
                     {
                         var w = Inventory[i];
-                        string equippedTag = (w == EquippedWeapon) ? "[E] " : "";
+                        string equippedTag = (EquippedWeapon != null && w.Equals(EquippedWeapon)) ? "[E] " : "";
                         Console.WriteLine($"{i + 1}. {equippedTag}{w}");
                     }
                 }
