@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel.Design;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -183,6 +184,7 @@ namespace XVIBE_TextRPG
                 TotalATK = (int)Player.TotalATK,
                 TotalDEF = Player.TotalDEF,
 
+                //무기 인벤토리
                 Inventory = Equipment.Inventory.Select(w => new WeaponData
                 {
                     Name = w.Name,
@@ -198,7 +200,25 @@ namespace XVIBE_TextRPG
                     Type = Equipment.EquippedWeapon.Type.ToString(),
                     ATK = Equipment.EquippedWeapon.ATK,
                     Price = Equipment.EquippedWeapon.Price
-                } : null
+                } : null,
+
+                // 방어구 인벤토리
+                ArmorInventory = Equipment.ArmorInventory.Select(a => new ArmorData
+                {
+                    Name = a.Name,
+                    Type = a.Type.ToString(),
+                    DEF = a.DEF,
+                    Price = a.Price
+                }).ToList(),
+
+                // 방어구도 똑같은 방식으로 저장
+                EquippedArmor = Equipment.EquippedArmor != null ? new ArmorData
+                {
+                    Name = Equipment.EquippedArmor.Name,
+                    Type = Equipment.EquippedArmor.Type.ToString(),
+                    DEF = Equipment.EquippedArmor.DEF,
+                    Price = Equipment.EquippedArmor.Price
+                } : null,
             };
 
             SaveSystem.Save(data);
@@ -241,7 +261,7 @@ namespace XVIBE_TextRPG
                     Enum.Parse<Equipment.WeaponType>(data.EquippedWeapon.Type),
                     data.EquippedWeapon.ATK,
                     data.EquippedWeapon.Price
-                    );
+                );
 
                 Equipment.Equip(loadedWeapon);
             }
@@ -251,7 +271,31 @@ namespace XVIBE_TextRPG
                 Equipment.ATKBonus = 0;
             }
 
-            UpdateStats();
+            Equipment.ArmorInventory = data.ArmorInventory.Select(a => new Equipment.Armor(
+                a.Name,
+                Enum.Parse<Equipment.ArmorType>(a.Type),
+                a.DEF,
+                a.Price
+            )).ToList();
+
+            if (data.EquippedArmor != null)
+            {
+                var loadedArmor = new Equipment.Armor(
+                    data.EquippedArmor.Name,
+                    Enum.Parse<Equipment.ArmorType>(data.EquippedArmor.Type),
+                    data.EquippedArmor.DEF,
+                    data.EquippedArmor.Price
+                );
+
+                Equipment.Equip(loadedArmor);
+            }
+            else
+            {
+                Equipment.EquippedArmor = null;
+                Equipment.DEFBonus = 0;
+            }
+
+                UpdateStats();
         }
 
         public static void ResetAfterDeath()
@@ -265,6 +309,9 @@ namespace XVIBE_TextRPG
             Equipment.Inventory.Clear();
             Equipment.EquippedWeapon = null;
             Equipment.ATKBonus = 0;
+            Equipment.ArmorInventory.Clear();
+            Equipment.EquippedArmor = null;
+            Equipment.DEFBonus = 0;
 
             //직업에 따른 능력치 초기화
             UpdateStats();
