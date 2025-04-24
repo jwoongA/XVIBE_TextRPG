@@ -26,7 +26,9 @@ namespace XVIBE_TextRPG
         public static int CurrentMP { get; set; } = MaxMP;
         public static int TotalATK { get; set; } = 10; 
         public static int TotalDEF { get; set; } = 5; 
-        
+
+        public static float AdditionalEvasionRate { get; set; } = 0; // 추가 회피율
+
 
         // 전투 턴 동안 추가 공격력
         private static int TemporaryATKBoost { get; set; } = 0;
@@ -88,10 +90,11 @@ namespace XVIBE_TextRPG
             return TotalATK + TemporaryATKBoost;
         }
 
-        // 턴 종료 시 추가 공격력 초기화
+        // 턴 종료 시 추가 공격력, 회피율 초기화
         public static void EndTurn()
         {
-            TemporaryATKBoost = 0;
+            TemporaryATKBoost = 0; // 턴 종료 시 공격력 초기화
+            AdditionalEvasionRate = 0; // 턴 종료 시 회피율 초기화
         }
 
         // 도적 스킬: 단일 대상에게 1.5배 피해
