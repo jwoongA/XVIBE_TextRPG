@@ -42,7 +42,7 @@ namespace XVIBE_TextRPG
             new Consumable("복합 포션(소)", 1000, 50, 50, 0, ConsumableType.Potion, "체력과 마나를 각각 50 회복합니다."),
             new Consumable("복합 포션(중)", 3000, 150, 150, 0, ConsumableType.Potion, "체력과 마나를 각각 150 회복합니다."),
             new Consumable("복합 포션(대)", 7000, 300, 300, 0, ConsumableType.Potion, "체력과 마나를 각각 300 회복합니다."),
-            new Consumable("섬광탄", 300, 0, 0, 5, ConsumableType.FlashGrenade, "섬광탄을 사용하여 회피율을 30% 증가시킵니다.(중첩 안됨)"),
+            new Consumable("섬광탄", 1500, 0, 0, 5, ConsumableType.FlashGrenade, "섬광탄을 사용하여 회피율을 30% 증가시킵니다.(중첩 안됨)"),
         };
 
         static public void UseConsumable()
