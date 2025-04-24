@@ -4,26 +4,52 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+/* [작성한 것들]
+ * - 퀘스트 클래스 생성 및 속성 정의
+ * - 퀘스트 완료 조건 판정 로직 
+ * - 반복 퀘스트의 경우 상태 리셋 함수
+ * - 퀘스트 정보 및 보상 조건 정리 리스트 생성
+ * 
+ * [작성해야 하는 것들]
+ * - 퀘스트 수락/거절 시스템
+ * - 퀘스트 목록 출력 기능 (UI용)
+ * - 퀘스트 상세 정보 출력 기능
+ * - 퀘스트 진행 조건 자동 체크 기능
+ * - 퀘스트 보상 지급 처리
+ * - 퀘스트 진행 중 목록 보기 기능
+ * - 플레이어 행동과 연동하여 퀘스트 조건 달성 확인 기능
+ * - 퀘스트 상태 저장/로드 기능
+*/
+
 namespace XVIBE_TextRPG
 {
     public enum QuestStatus { NotAccepted, InProgress, Completed } // 퀘스트 상태를 정의하는 열거형, 퀘스트 상태를 표시하는데 사용함
     public class Quest
     {
-        public int Index;
-        public string QuestName;
-        public string Description;
-        public QuestStatus Status;
+        public int Index; // 퀘스트 번호
+        public string QuestName; // 퀘스트 이름
+        public string Description; // 상세 설명
+        public QuestStatus Status; // 퀘스트 상태 (미수락, 진행중, 완료)
+        public bool IsRepeatable; // 반복 퀘스트인가?
+
+        //조건
         public int RequiredKillCount; // 필요 몬스터 처치 수 (조건)
         public int CurrentKillCount; // 현재 처치한 몬스터
-        public int RewardGold;
-        public int RewardExp;
-        public Equipment.Weapon RewardWeapon;
-        public int RewardWeapon_Count;
-        public int Required_Level;
-        public int Required_TotalAtk;
-        public int Required_TotalDef;
-        public bool IsRepeatable;
-        public bool IsCompleted => CurrentKillCount >= RequiredKillCount; // IsCompleted는 현재 잡은 몬스터가 목표 몬스터보다 크거나 같을때 true를 반환한다는 람다식
+        public int Required_Level; // 필요 레벨
+        public int Required_TotalAtk; // 필요 공격력
+        public int Required_TotalDef; // 필요 방어력
+
+        //보상
+        public int RewardGold; // 보상 골드
+        public int RewardExp; // 보상 경험치
+        public Equipment.Weapon RewardWeapon; // 장비보상 무기
+        public int RewardWeapon_Count; // 보상 무기 수량
+
+        public bool IsCompleted => // IsCompleted는 퀘스트 조건을 만족하면 true를 반환한다는 람다식
+            (CurrentKillCount >= RequiredKillCount) ||
+            (Required_Level > 0 && Player.Level >= Required_Level) ||
+            (Required_TotalAtk > 0 && Player.TotalATK >= Required_TotalAtk) ||
+            (Required_TotalDef > 0 && Player.TotalDEF >= Required_TotalDef); 
 
         public void ResetIfRepeatable()
         {
