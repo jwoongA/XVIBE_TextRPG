@@ -101,7 +101,7 @@ namespace XVIBE_TextRPG
                     for (int i = 0; i < Inventory.Count; i++)
                     {
                         var w = Inventory[i];
-                        string equippedTag = (EquippedWeapon != null && w.Equals(EquippedWeapon)) ? "[E] " : "";
+                        string equippedTag = (EquippedWeapon != null && w.Equals(EquippedWeapon)) ? "[E] " : ""; // 이 부분도 참조가 달라 적용 안되던 부분 수정
                         Console.WriteLine($"{i + 1}. {equippedTag}{w}");
                     }
                 }
