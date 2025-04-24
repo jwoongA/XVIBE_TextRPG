@@ -290,7 +290,7 @@ namespace XVIBE_TextRPG
                 Console.WriteLine("[캐릭터 정보]");
                 Console.WriteLine($"Lv.{Level - 1} {Name} -> Lv.{Level} {Name}");
                 Console.WriteLine($"Hp.{CurrentHP} -> {MaxHP}");
-                Console.WriteLine($"Hp.{CurrentMP} -> {MaxMP}");
+                Console.WriteLine($"Mp.{CurrentMP} -> {MaxMP}");
                 Console.WriteLine($"공격력: {TotalATK - 0.5f} -> {TotalATK}");
                 Console.WriteLine($"방어력:{TotalDEF - 1} -> {TotalDEF}");
                 Console.WriteLine($"Exp:{Exp + 10} -> {remainderExp}\n");
