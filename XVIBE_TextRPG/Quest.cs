@@ -9,11 +9,11 @@ using System.Threading.Tasks;
  * - 퀘스트 완료 조건 판정 로직 
  * - 반복 퀘스트의 경우 상태 리셋 함수
  * - 퀘스트 정보 및 보상 조건 정리 리스트 생성
+ * - 퀘스트 목록 출력 기능 
+ * - 퀘스트 상세 정보 출력 기능
  * 
  * [작성해야 하는 것들]
  * - 퀘스트 수락/거절 시스템
- * - 퀘스트 목록 출력 기능 (UI용)
- * - 퀘스트 상세 정보 출력 기능
  * - 퀘스트 진행 조건 자동 체크 기능
  * - 퀘스트 보상 지급 처리
  * - 퀘스트 진행 중 목록 보기 기능
@@ -52,15 +52,6 @@ namespace XVIBE_TextRPG
             (Required_Level > 0 && Player.Level >= Required_Level) ||
             (Required_TotalAtk > 0 && Player.TotalATK >= Required_TotalAtk) ||
             (Required_TotalDef > 0 && Player.TotalDEF >= Required_TotalDef); 
-
-        public void ResetIfRepeatable()
-        {
-            if (IsRepeatable && Status == QuestStatus.Completed) // 반복가능하고 완료한 퀘스트의 경우에는
-            {
-                Status = QuestStatus.NotAccepted; // 퀘스트의 상태를 미수락 상태로 리셋한다
-                CurrentKillCount = 0; // 현재 처치한 몬스터도 초기화한다
-            }
-        }
         
         public class QuestManager
         {
@@ -156,7 +147,9 @@ namespace XVIBE_TextRPG
                         QuestStatus.Completed => "완료"
                     };
 
-                    Console.WriteLine($"{quest.Index}. [{statusText}] {quest.QuestName}");
+                    string Reapeatable_Quest = quest.IsRepeatable ? "[반복]" : "[----]";
+
+                    Console.WriteLine($" {quest.Index}. [{statusText}] {Reapeatable_Quest} {quest.QuestName}");
                 }
                 Console.WriteLine("\n※ 번호를 입력하면 상세 정보를 확인할 수 있습니다.");
                 Console.WriteLine("※ 0을 입력하면 목록에서 나갑니다.");
@@ -197,8 +190,18 @@ namespace XVIBE_TextRPG
                 
             }
         }
+        public void  ResetIfRepeatable() // 반복 가능 퀘스트 초기화 함수
+        {
+            if (IsRepeatable && Status == QuestStatus.Completed) // 반복가능하고 완료한 퀘스트의 경우에는
+            {
+                Status = QuestStatus.NotAccepted; // 퀘스트의 상태를 미수락 상태로 리셋한다
+                CurrentKillCount = 0; // 현재 처치한 몬스터도 초기화한다
+            }
+        }
+
         public static void ShowQuestDetail(Quest quest) // 퀘스트 상세 보기 함수
         {
+            
             Console.Clear();
             Console.WriteLine($"[{quest.QuestName}]\n");
             Console.WriteLine($"{quest.Description}");
@@ -209,6 +212,7 @@ namespace XVIBE_TextRPG
 
             // 장비 장착 퀘스트는 아직 구현 안되어서 나중에 추가해야함
 
+            // [퀘스트 조건]
             if (quest.Required_TotalAtk > 0)
             { Console.WriteLine($"\n※ 달성 조건: 공격력 {Player.TotalATK} / {quest.Required_TotalAtk}"); }
 
@@ -219,16 +223,69 @@ namespace XVIBE_TextRPG
             { Console.WriteLine($"\n※ 달성 조건: 레벨 {Player.Level} / {quest.Required_Level}"); }
 
 
-
+            // [퀘스트 보상]
             Console.WriteLine($"\n- 보상: 골드 {quest.RewardGold}, 경험치 {quest.RewardExp}");
             if (quest.RewardWeapon != null)
             {
                 Console.WriteLine($"- 장비 보상: {quest.RewardWeapon.Name} x{quest.RewardWeapon_Count}");
             }
 
+            Console.WriteLine("\n==============================");
 
-            Console.WriteLine("\n아무 키나 누르면 퀘스트 목록으로 돌아갑니다.");
-            Console.ReadKey();
+            if (quest.Status == QuestStatus.NotAccepted) // 퀘스트가 수락중이 아닐때는
+            {
+                Console.Write("이 퀘스트를 수락하시겠습니까? (Y/N) \n>> ");
+                string input = Console.ReadLine().Trim().ToUpper(); // 문자열 앞뒤 공백 제거 및 대문자화 -> 예외처리 용도
+
+                if (input == "Y")
+                {
+                    quest.Status = QuestStatus.InProgress;
+                    Console.WriteLine("\n퀘스트를 수락하였습니다!");
+                }
+                else
+                {
+                    Console.WriteLine("\n퀘스트를 수락하지 않았습니다.");
+                }
+            }
+            else if (quest.Status == QuestStatus.InProgress) // 퀘스트가 진행중일때는
+            {
+                Console.WriteLine("\n이 퀘스트는 현재 진행 중입니다.\n진행을 중단하시겠습니까? (Y/N) >> ");
+                string input = Console.ReadLine().Trim().ToUpper();
+
+                if (input == "Y")
+                {
+                    quest.Status = QuestStatus.NotAccepted;
+                    Console.WriteLine("\n퀘스트를 진행을 취소하였습니다!");
+                }
+                else
+                {
+                    Console.WriteLine("\n퀘스트를 계속 진행합니다!");
+                }
+            }
+            else if (quest.Status == QuestStatus.Completed)
+            {
+                if(quest.IsRepeatable)
+                {
+                    Console.WriteLine("\n해당 퀘스트는 반복 진행이 가능합니다! \n퀘스트를 다시 수락합니까? (Y/N) >> ");
+                    string input = Console.ReadLine().Trim().ToUpper();
+                    if (input == "Y")
+                    {
+                        quest.ResetIfRepeatable();
+                        Console.WriteLine("\n해당 퀘스트를 다시 수락하여 진행합니다!");
+                    }
+                    else
+                    {
+                        Console.WriteLine("\n퀘스트 수락을 취소하였습니다.");
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("\n이 퀘스트는 완료되었습니다. 다른 퀘스트를 선택하세요!");
+                }
+            }
+
+            Console.WriteLine("\n계속하려면 Enter를 누르세요...");
+            Console.ReadLine();
         }
 
     }
