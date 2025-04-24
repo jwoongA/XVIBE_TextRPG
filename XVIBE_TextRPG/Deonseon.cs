@@ -202,11 +202,23 @@ namespace XVIBE_TextRPG
             {
                 int criticalDamage = target.TakeCriticalDamage((int)damage);// 몬스터에게 치명타 데미지 피해
                 battleLog.Add($"플레이어가 {target.Name}에게 {criticalDamage}의 [치명타] 피해를 입혔습니다!!!");
+
+                if (target.IsDead()) 
+                { 
+                    Quest.CurrentKillCount += 1; 
+                }
+                Quest.CheckQuestConditions();
             }
             else
             {
                 target.TakeDamage((int)damage); // 일반 공격
                 battleLog.Add($"플레이어가 {target.Name}에게 {damage}의 피해를 입혔습니다.");
+
+                if (target.IsDead()) 
+                {
+                    Quest.CurrentKillCount += 1;
+                }
+                Quest.CheckQuestConditions();
             }
         }
 
@@ -222,11 +234,26 @@ namespace XVIBE_TextRPG
             {
                 Player.ThiefSkill(target);
                 battleLog.Add($"플레이어가 도적의 스킬을 사용하여 {target.Name}에게 큰 피해를 입혔습니다!");
+
+                if (target.IsDead())
+                {
+                    Quest.CurrentKillCount += 1;
+                }
+                Quest.CheckQuestConditions();
             }
             else if (Player.Job == "마법사")
             {
                 Player.MageSkill(monsters.ToArray());
                 battleLog.Add("플레이어가 마법사의 스킬을 사용하여 모든 적에게 피해를 입혔습니다!");
+
+                foreach (var monster in monsters)
+                {
+                    if (target.IsDead())
+                    {
+                        Quest.CurrentKillCount += 1;
+                    }
+                }
+                Quest.CheckQuestConditions();
             }
             else
             {
