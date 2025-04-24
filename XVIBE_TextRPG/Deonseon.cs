@@ -8,6 +8,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Transactions;
 using static XVIBE_TextRPG.Enemy;
+using static XVIBE_TextRPG.Equipment;
+using static XVIBE_TextRPG.WeaponReward;
 
 namespace XVIBE_TextRPG
 {
@@ -17,7 +19,7 @@ namespace XVIBE_TextRPG
         protected List<string> battleLog; // 배틀 로그 리스트
         protected List<Reward> rewards = new List<Reward>(); // 던전 클리어 보상 리스트
 
-        public Deonseon() // 생성자
+        public Deonseon() // 생성자에서 보상 설정
         {
             rewards.Add(new GoldReward(GetGoldReward())); // 던전 클리어 골드 보상 rewards 리스트에 추가
         }
@@ -52,10 +54,10 @@ namespace XVIBE_TextRPG
             ShowEnterMessage();
             StartDungeon();
         }
-        
+
         // 던전 시작 메서드
         public void StartDungeon()
-        {           
+        {
             if (monsters == null || monsters.Count == 0)
             {
                 Console.WriteLine("에러: 몬스터가 생성되지 않았습니다.");
@@ -128,16 +130,16 @@ namespace XVIBE_TextRPG
                 {
                     if (monster.Dead) // 적이 죽었을 경우
                     {
-                        if(!monster.NotGetExperience) // 경험치 지급을 안 했을경우
+                        if (!monster.NotGetExperience) // 경험치 지급을 안 했을경우
                         {
                             GetExperience(monster);
                             monster.NotGetExperience = true; // 경험치 지급 -완-
                         }
-                    }    
+                    }
                 }
 
                 // 레벨업
-                Player.LvUp(); 
+                Player.LvUp();
 
                 // 전투 결과 확인
                 if (Player.CurrentHP <= 0 && monsters.TrueForAll(m => m.IsDead()))
@@ -192,7 +194,7 @@ namespace XVIBE_TextRPG
                 Console.WriteLine($"{target.Name}은(는) 이미 쓰러졌습니다.");
                 return;
             }
-            else if(Combat.IsMiss())
+            else if (Combat.IsMiss())
             {
                 battleLog.Add($"{target.Name}을(를) 공격했지만 아무일도 일어나지 않았습니다....");
             }
@@ -266,11 +268,11 @@ namespace XVIBE_TextRPG
 
             foreach (var monster in monsters)
             {
-                if(monster.IsDead())
+                if (monster.IsDead())
                 {
                     continue;   // 몬스터가 죽으면 그냥 진행해라
                 }
-                else if(Combat.IsMiss()) // 10퍼센트 확률로 회피하는 경우 회피 판정해라
+                else if (Combat.IsMiss()) // 10퍼센트 확률로 회피하는 경우 회피 판정해라
                 {
                     battleLog.Add($"플레이어가 {monster.Name}의 공격을 [회피]했습니다!");
                 }
@@ -304,8 +306,6 @@ namespace XVIBE_TextRPG
         // 전투 승리 메서드
         public void BattleVictory()
         {
-            GetRewards(); // 클리어 보상 호출
-
             Console.WriteLine(new string('-', 40)); // 구분선
             Console.WriteLine(@"
  ___      ___ ___  ________ _________  ________  ________      ___    ___ ___       
@@ -320,6 +320,7 @@ namespace XVIBE_TextRPG
                                                                                     
 ");
             Console.WriteLine();
+            GetRewards(); // 클리어 보상 호출
             Console.WriteLine($"보상으로 {GetGoldReward()} G를 획득했습니다.");
             Console.WriteLine($"총 경험치 {totalExpGained}를 획득했습니다.");
             Player.SavePlayerData();
@@ -374,6 +375,45 @@ namespace XVIBE_TextRPG
             {
                 reward.GetReward(); // Reward.cs에 있는 GetReward에서 보상을 받음
             }
+            DropItem(); // 아이템 보상
+        }
+
+        // 던전 클리어 후 아이템 보상
+        private void DropItem()
+        {
+            Random rand = new Random();
+
+            //인벤토리에 없는 아이템 리스트
+            List<Equipment.Weapon> NoWeapon = Shop.storeWeapons.Where(weapon => !Equipment.Inventory.Any(owned => owned.Name == weapon.Name)).ToList();
+            List<Equipment.Armor> NoArmor = Shop.storeArmors.Where(armor => !Equipment.ArmorInventory.Any(owned => owned.Name == armor.Name)).ToList();
+
+            if (NoWeapon.Count > 0) // 소지하지 않은 무기의 수 > 0
+            {
+                int randDrop = rand.Next(1, 101); // 무기 드랍 확률
+                int itemDrop = rand.Next(1, 101); // 무기와 방어구 중 하나 드랍 확률
+
+                if (randDrop <= 20) // 아이템 드랍률 20%
+                {
+                    if (itemDrop > 50) // 무기 드랍률 50%
+                    {
+                        int randnum = rand.Next(0, NoWeapon.Count); // 인벤토리에 없는 무기 개수 만큼
+                        Equipment.Weapon reWeapon = NoWeapon[randnum]; // 보상 무기 = 내가 소지하고 있지 않은 무기
+                        rewards.Add(new WeaponReward(reWeapon)); // 내가 소지하지 않은 무기를 보상 리스트에 추가
+                        new WeaponReward(reWeapon).GetReward();
+
+                        Console.WriteLine($"보상으로 '{reWeapon.Name}'을 획득했습니다!");
+                    }
+                    else // 방어구 드랍률 50%
+                    {
+                        int randnum = rand.Next(0, NoArmor.Count); // 인벤토리에 없는 방어구 개수 만큼
+                        Equipment.Armor reArmor = NoArmor[randnum]; // 보상 방어구 = 내가 소지하고 있지 않은 방어구
+                        rewards.Add(new ArmorReward(reArmor)); // 내가 소지하지 않은 방어구를 보상 리스트에 추가
+                        new ArmorReward(reArmor).GetReward();
+
+                        Console.WriteLine($"보상으로 '{reArmor.Name}'을 획득했습니다!");
+                    }
+                }
+            }
         }
     }
 
@@ -383,7 +423,7 @@ namespace XVIBE_TextRPG
         {
             Console.WriteLine("초급 던전에 입장합니다!");
         }
-          
+
         public override List<Enemy> GenerateMonsters()
         {
             var random = new Random();
