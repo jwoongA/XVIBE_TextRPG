@@ -254,7 +254,7 @@ namespace XVIBE_TextRPG
             UpdateStats();
         }
 
-        public void ResstAfterDeath()
+        public static void ResetAfterDeath()
         {
             //레벨, 경험치, 골드 초기화
             Level = 1;
@@ -272,8 +272,6 @@ namespace XVIBE_TextRPG
             // 체력, 마나는 최대치로 회복
             CurrentHP = MaxHP;
             CurrentMP = MaxMP;
-
-            Console.WriteLine();
         }
 
     }
