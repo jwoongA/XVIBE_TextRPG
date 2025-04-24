@@ -21,14 +21,13 @@ namespace XVIBE_TextRPG
 
         public static int Gold { get; set; } = 1500; // 플레이어 골드
 
-        public static int MaxHP { get; set; } = 100; 
+        public static int MaxHP { get; set; } = 100; // 직업에 따라 결정되도록 수정 필요
         public static int CurrentHP { get; set; } = MaxHP;
-        public static int MaxMP { get; set; } = 50; 
+        public static int MaxMP { get; set; } = 50; // 직업에 따라 결정되도록 수정 필요
         public static int CurrentMP { get; set; } = MaxMP;
 
         public static float TotalATK { get; set; } = 10; // 장비와 레벨에 따라 결정되도록 수정 필요
         public static int TotalDEF { get; set; } = 5; // 장비와 레벨에 따라 결정되도록 수정 필요
-
 
         // 전투 턴 동안 추가 공격력
         private static int TemporaryATKBoost { get; set; } = 0;
@@ -338,7 +337,7 @@ namespace XVIBE_TextRPG
                 Console.WriteLine("[캐릭터 정보]");
                 Console.WriteLine($"Lv.{Level - 1} {Name} -> Lv.{Level} {Name}");
                 Console.WriteLine($"Hp.{CurrentHP} -> {MaxHP}");
-                Console.WriteLine($"Hp.{CurrentMP} -> {MaxMP}");
+                Console.WriteLine($"Mp.{CurrentMP} -> {MaxMP}");
                 Console.WriteLine($"공격력: {TotalATK - 0.5f} -> {TotalATK}");
                 Console.WriteLine($"방어력:{TotalDEF - 1} -> {TotalDEF}");
                 Console.WriteLine($"Exp:{Exp + 10} -> {remainderExp}\n");
