@@ -268,6 +268,7 @@ namespace XVIBE_TextRPG
             Equipment.Inventory.Clear();
             Equipment.EquippedWeapon = null;
             Equipment.ATKBonus = 0;
+            Player.EndTurn(); // 전투 종료 시 추가 능력치 초기화
 
             //직업에 따른 능력치 초기화
             UpdateStats();

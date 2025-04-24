@@ -42,31 +42,30 @@ namespace XVIBE_TextRPG
             new Consumable("복합 포션(소)", 1000, 50, 50, 0, ConsumableType.Potion, "체력과 마나를 각각 50 회복합니다."),
             new Consumable("복합 포션(중)", 3000, 150, 150, 0, ConsumableType.Potion, "체력과 마나를 각각 150 회복합니다."),
             new Consumable("복합 포션(대)", 7000, 300, 300, 0, ConsumableType.Potion, "체력과 마나를 각각 300 회복합니다."),
-            new Consumable("섬광탄", 300, 0, 0, 5, ConsumableType.FlashGrenade)
+            new Consumable("섬광탄", 300, 0, 0, 5, ConsumableType.FlashGrenade, "섬광탄을 사용하여 회피율을 30% 증가시킵니다.(중첩 안됨)"),
         };
 
-        //포션 사용 메서드 구현안됨
         static public void UseConsumable()
         {
             Console.WriteLine("===== 사용할 소모품 선택 =====");
 
+            // 보유량이 있는 소모품만 따로 리스트로 관리
+            var availableConsumables = consumable.Where(item => item.Amount > 0).ToList();
+
             // 보유량이 있는 소모품만 출력
-            int displayIndex = 1; // 출력용 인덱스는 1부터 시작
-            for (int i = 0; i < consumable.Count; i++)
+            for (int i = 0; i < availableConsumables.Count; i++)
             {
-                var item = consumable[i];
-                if (item.Amount > 0) // 보유량이 있는 경우만 출력
-                {
-                    Console.WriteLine($"{displayIndex}. {item.Name}, 효과: {item.Description}, 보유량: {item.Amount}");
-                    displayIndex++;
-                }
+                var item = availableConsumables[i];
+                Console.WriteLine($"{i + 1}. {item.Name}, 효과: {item.Description}, 보유량: {item.Amount}");
             }
 
             // 보유량이 있는 소모품이 없는 경우
-            if (displayIndex == 1)
+            if (availableConsumables.Count == 0)
             {
                 Console.WriteLine("보유 중인 소모품이 없습니다.");
+                return;
             }
+
             Console.WriteLine("숫자 키를 눌러 사용할 소모품을 선택하세요.");
             Console.WriteLine("0. 뒤로가기");
             string input = Console.ReadLine();
@@ -75,33 +74,24 @@ namespace XVIBE_TextRPG
                 case "0":
                     return;
                 default:
-                    if (int.TryParse(input, out int index) && index > 0 && index <= consumable.Count)
+                    if (int.TryParse(input, out int index) && index > 0 && index <= availableConsumables.Count)
                     {
-                        var selectedConsumable = consumable[index - 1];
-                        if (selectedConsumable.Amount > 0)
-                        {
-                            // 아이템 사용 처리
-                            Console.WriteLine($"{selectedConsumable.Name}을(를) 사용했습니다!");
-                            selectedConsumable.Amount--;
+                        var selectedConsumable = availableConsumables[index - 1];
+                        Console.WriteLine($"{selectedConsumable.Name}을(를) 사용했습니다!");
+                        Console.WriteLine($"선택된 소모품: {selectedConsumable.Name}, 사용전 보유량: {selectedConsumable.Amount}");
+                        selectedConsumable.Amount--;
 
-                            // 포션과 섬광탄 구분 처리
-                            if (selectedConsumable.Type == ConsumableType.Potion)
-                            {
-                                // 포션 사용: HP와 MP 회복
-                                Player.CurrentHP = Math.Min(Player.CurrentHP + selectedConsumable.HealHP, Player.MaxHP);
-                                Player.CurrentMP = Math.Min(Player.CurrentMP + selectedConsumable.HealMP, Player.MaxMP);
-                                Console.WriteLine($"체력: {Player.CurrentHP}/{Player.MaxHP}, 마나: {Player.CurrentMP}/{Player.MaxMP}");
-                            }
-                            else if (selectedConsumable.Type == ConsumableType.FlashGrenade)
-                            {
-                                // 섬광탄 사용: 회피율 증가
-                                Player.AdditionalEvasionRate += 20; // 예: 회피율 +20%
-                                Console.WriteLine("섬광탄을 사용하여 회피율이 증가했습니다!");
-                            }
-                        }
-                        else
+                        // 포션과 섬광탄 구분 처리
+                        if (selectedConsumable.Type == ConsumableType.Potion)
                         {
-                            Console.WriteLine("보유량이 부족합니다.");
+                            Player.CurrentHP = Math.Min(Player.CurrentHP + selectedConsumable.HealHP, Player.MaxHP);
+                            Player.CurrentMP = Math.Min(Player.CurrentMP + selectedConsumable.HealMP, Player.MaxMP);
+                            Console.WriteLine($"체력: {Player.CurrentHP}/{Player.MaxHP}, 마나: {Player.CurrentMP}/{Player.MaxMP}");
+                        }
+                        else if (selectedConsumable.Type == ConsumableType.FlashGrenade)
+                        {
+                            Player.AdditionalEvasionRate = 0.3f; // 추가회피율 30%로 설정
+                            Console.WriteLine("섬광탄을 사용하여 회피율이 30% 증가했습니다!");
                         }
                     }
                     else
@@ -110,10 +100,6 @@ namespace XVIBE_TextRPG
                     }
                     break;
             }
-
-
-
-
         }
     }
 }

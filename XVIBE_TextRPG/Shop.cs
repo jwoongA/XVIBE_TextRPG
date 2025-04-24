@@ -33,19 +33,13 @@ namespace XVIBE_TextRPG
                         BuyWeapons();
                         break;
                     case "2": // 무기 판매
-                        Console.WriteLine("\n[미구현] 무기 판매 기능은 아직 구현되지 않았습니다.");
-                        Console.WriteLine("\nEnter를 눌러 계속...");
-                        Console.ReadLine();
+                        SellWeapons();
                         break;
                     case "3": // 소모품 구매
-                        Console.WriteLine("\n[미구현] 소모품 구매 기능은 아직 구현되지 않았습니다.");
-                        Console.WriteLine("\nEnter를 눌러 계속...");
-                        Console.ReadLine();
+                        BuyConsumables();
                         break;
                     case "4": // 소모품 판매
-                        Console.WriteLine("\n[미구현] 소모품 판매 기능은 아직 구현되지 않았습니다.");
-                        Console.WriteLine("\nEnter를 눌러 계속...");
-                        Console.ReadLine();
+                        SellConsumables();
                         break;
                     case "0": // 나가기
                         return;
@@ -99,6 +93,145 @@ namespace XVIBE_TextRPG
                     {
                         Console.WriteLine("\n골드가 부족합니다!");
                     }
+                }
+                else
+                {
+                    Console.WriteLine("\n잘못된 입력입니다.");
+                }
+
+                Console.WriteLine("\nEnter를 눌러 계속...");
+                Console.ReadLine();
+            }
+        }
+        private static void SellWeapons()
+        {
+            while (true)
+            {
+                Console.Clear();
+                Console.WriteLine("===== 무기 판매 =====");
+                Console.WriteLine($"보유 골드: {Player.Gold} G\n");
+
+                if (Equipment.Inventory.Count == 0)
+                {
+                    Console.WriteLine("판매할 무기가 없습니다.");
+                    Console.WriteLine("\nEnter를 눌러 계속...");
+                    Console.ReadLine();
+                    break;
+                }
+
+                for (int i = 0; i < Equipment.Inventory.Count; i++)
+                {
+                    var w = Equipment.Inventory[i];
+                    Console.WriteLine($"{i + 1}. {w}");
+                }
+
+                Console.WriteLine("0. 뒤로가기");
+                Console.Write("\n판매할 무기 번호를 입력하세요: ");
+                string input = Console.ReadLine();
+
+                if (input == "0")
+                    break;
+
+                if (int.TryParse(input, out int choice) && choice > 0 && choice <= Equipment.Inventory.Count)
+                {
+                    var selected = Equipment.Inventory[choice - 1];
+                    Player.Gold += selected.Price / 2; // 판매 가격은 구매 가격의 50%
+                    Equipment.Inventory.Remove(selected);
+                    Console.WriteLine($"\n{selected.Name}을(를) 판매했습니다!");
+                }
+                else
+                {
+                    Console.WriteLine("\n잘못된 입력입니다.");
+                }
+
+                Console.WriteLine("\nEnter를 눌러 계속...");
+                Console.ReadLine();
+            }
+        }
+
+        private static void BuyConsumables()
+        {
+            while (true)
+            {
+                Console.Clear();
+                Console.WriteLine("===== 소모품 구매 =====");
+                Console.WriteLine($"보유 골드: {Player.Gold} G\n");
+
+                for (int i = 0; i < Consumable.consumable.Count; i++)
+                {
+                    var c = Consumable.consumable[i];
+                    Console.WriteLine($"{i + 1}. {c.Name}, 가격: {c.Price} G, 효과: {c.Description}");
+                }
+
+                Console.WriteLine("0. 뒤로가기");
+                Console.Write("\n구매할 소모품 번호를 입력하세요: ");
+                string input = Console.ReadLine();
+
+                if (input == "0")
+                    break;
+
+                if (int.TryParse(input, out int choice) && choice > 0 && choice <= Consumable.consumable.Count)
+                {
+                    var selected = Consumable.consumable[choice - 1];
+
+                    if (Player.Gold >= selected.Price)
+                    {
+                        selected.Amount++;
+                        Player.Gold -= selected.Price;
+                        Console.WriteLine($"\n{selected.Name}을(를) 구매했습니다!");
+                    }
+                    else
+                    {
+                        Console.WriteLine("\n골드가 부족합니다!");
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("\n잘못된 입력입니다.");
+                }
+
+                Console.WriteLine("\nEnter를 눌러 계속...");
+                Console.ReadLine();
+            }
+        }
+
+        private static void SellConsumables()
+        {
+            while (true)
+            {
+                Console.Clear();
+                Console.WriteLine("===== 소모품 판매 =====");
+                Console.WriteLine($"보유 골드: {Player.Gold} G\n");
+
+                var ownedConsumables = Consumable.consumable.Where(c => c.Amount > 0).ToList();
+
+                if (ownedConsumables.Count == 0)
+                {
+                    Console.WriteLine("판매할 소모품이 없습니다.");
+                    Console.WriteLine("\nEnter를 눌러 계속...");
+                    Console.ReadLine();
+                    break;
+                }
+
+                for (int i = 0; i < ownedConsumables.Count; i++)
+                {
+                    var c = ownedConsumables[i];
+                    Console.WriteLine($"{i + 1}. {c.Name}, 보유량: {c.Amount}, 판매 가격: {c.Price / 2} G");
+                }
+
+                Console.WriteLine("0. 뒤로가기");
+                Console.Write("\n판매할 소모품 번호를 입력하세요: ");
+                string input = Console.ReadLine();
+
+                if (input == "0")
+                    break;
+
+                if (int.TryParse(input, out int choice) && choice > 0 && choice <= ownedConsumables.Count)
+                {
+                    var selected = ownedConsumables[choice - 1];
+                    selected.Amount--;
+                    Player.Gold += selected.Price / 2; // 판매 가격은 구매 가격의 50%
+                    Console.WriteLine($"\n{selected.Name}을(를) 판매했습니다!");
                 }
                 else
                 {

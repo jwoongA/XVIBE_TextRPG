@@ -124,8 +124,7 @@ namespace XVIBE_TextRPG
                 string targetInput = Console.ReadLine();
                 if (targetInput == "0")
                 {
-                    Console.WriteLine("던전에서 후퇴합니다.");
-                    Player.EndTurn(); // 전투 종료 시 공격력 버프 초기화
+                    Console.WriteLine("행동 선택으로 되돌아갑니다.");
                     break;
                 }
 
@@ -210,7 +209,7 @@ namespace XVIBE_TextRPG
         {
             Console.WriteLine($"플레이어 상태: HP: {Player.CurrentHP}/{Player.MaxHP}, MP: {Player.CurrentMP}/{Player.MaxMP}");
             Console.WriteLine($"직업: {Player.Job}, 레벨: {Player.Level}, 경험치: {Player.Exp}");
-            Console.WriteLine($"공격력: {Player.GetCurrentATK()}, 방어력: {Player.TotalDEF}");
+            Console.WriteLine($"공격력: {Player.GetCurrentATK()}, 방어력: {Player.TotalDEF}, 추가 회피율: {Player.AdditionalEvasionRate*100}%");
             Console.WriteLine(new string('-', 40)); // 구분선
         }
 
@@ -342,9 +341,11 @@ namespace XVIBE_TextRPG
             Console.WriteLine();
             Console.WriteLine($"보상으로 {GetGoldReward()} G를 획득했습니다.");
             Console.WriteLine($"경험치 {expGained}를 획득했습니다.");
+            Player.EndTurn(); // 전투 종료 시 초기화
             Player.SavePlayerData();
             Console.WriteLine();
             Console.WriteLine("Enter 키를 눌러주세요.");
+
             Console.ReadLine();
         }
 
