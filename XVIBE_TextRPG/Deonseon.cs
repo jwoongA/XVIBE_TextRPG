@@ -55,10 +55,7 @@ namespace XVIBE_TextRPG
         
         // 던전 시작 메서드
         public void StartDungeon()
-        {
-            // 전투 시작 직전 경험치 저장
-            expBeforeBattle = Player.Exp;
-
+        {           
             if (monsters == null || monsters.Count == 0)
             {
                 Console.WriteLine("에러: 몬스터가 생성되지 않았습니다.");
@@ -275,14 +272,12 @@ namespace XVIBE_TextRPG
         }
 
         // 전투 시작 시 경험치 저장
-        private int expBeforeBattle = 0;
+        private int totalExpGained = 0;
 
         // 전투 승리 메서드
         public void BattleVictory()
         {
             GetRewards(); // 클리어 보상 호출
-
-            int expGained = Player.Exp - expBeforeBattle; // 던전에서 얻은 경험치 계산
 
             Console.WriteLine(new string('-', 40)); // 구분선
             Console.WriteLine(@"
@@ -299,7 +294,7 @@ namespace XVIBE_TextRPG
 ");
             Console.WriteLine();
             Console.WriteLine($"보상으로 {GetGoldReward()} G를 획득했습니다.");
-            Console.WriteLine($"경험치 {expGained}를 획득했습니다.");
+            Console.WriteLine($"총 경험치 {totalExpGained}를 획득했습니다.");
             Player.SavePlayerData();
             Console.WriteLine();
             Console.WriteLine("Enter 키를 눌러주세요.");
@@ -335,6 +330,7 @@ namespace XVIBE_TextRPG
         private void GetExperience(Enemy Deadmonster)
         {
             Player.Exp += Deadmonster.Exp;
+            totalExpGained += Deadmonster.Exp; // 경험치 누적 저장
         }
 
         // 각 던전별로 골드 보상액을 다르게 설정
