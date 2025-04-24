@@ -23,7 +23,7 @@ using System.Threading.Tasks;
 
 namespace XVIBE_TextRPG
 {
-    public enum QuestStatus { NotAccepted, InProgress, Completed } // 퀘스트 상태를 정의하는 열거형, 퀘스트 상태를 표시하는데 사용함
+    public enum QuestStatus { NotAccepted, InProgress, Completed, Finished} // 퀘스트 상태를 정의하는 열거형, 퀘스트 상태를 표시하는데 사용함
     public class Quest
     {
         // [정보]
@@ -143,7 +143,8 @@ namespace XVIBE_TextRPG
                     {
                         QuestStatus.NotAccepted => "미수락",
                         QuestStatus.InProgress => "진행중",
-                        QuestStatus.Completed => "완료"
+                        QuestStatus.Completed => "보상",
+                        QuestStatus.Finished => "완료"
                     };
 
                     string Reapeatable_Quest = quest.IsRepeatable ? "[반복]" : "[----]";
@@ -263,17 +264,20 @@ namespace XVIBE_TextRPG
                     string input = Console.ReadLine().Trim().ToUpper();
                     if (input == "Y")
                     {
-                        quest.Status = QuestStatus.NotAccepted; // 퀘스트의 상태를 미수락 상태로 리셋한다
                         CurrentKillCount = 0; // 현재 처치한 몬스터도 초기화한다
+                        quest.Status = QuestStatus.InProgress; // 퀘스트의 상태를 진행 상태로 리셋한다
                         Console.WriteLine("\n해당 퀘스트를 다시 수락하여 진행합니다!");
                     }
                     else
                     {
+                        CurrentKillCount = 0;
+                        quest.Status = QuestStatus.NotAccepted;
                         Console.WriteLine("\n퀘스트 수락을 취소하였습니다.");
                     }
                 }
                 else
                 {
+                    quest.Status = QuestStatus.Finished;
                     Console.WriteLine("\n이 퀘스트는 완료되었습니다. 다른 퀘스트를 선택하세요!");
                 }
             }
@@ -299,7 +303,7 @@ namespace XVIBE_TextRPG
 
         public static void GiveQuestReward(Quest quest) // 보상 지급 함수 상세 퀘스트 화면에서 지급할 생각
         {
-            // 퀘스트를 완료하여 보상 획득이 가능합니다. 보상을 수령하시겠습니까? (Y/N)
+
             Console.WriteLine($"[{quest.QuestName}]을(를) 완료하여 보상 획득이 가능합니다.\n보상을 수령하시겠습니까? (Y/N) >> ");
             string input = Console.ReadLine().Trim().ToUpper();
             if (input == "Y")
@@ -322,7 +326,6 @@ namespace XVIBE_TextRPG
                     Console.WriteLine($"+ {quest.RewardWeapon.Name} ×{quest.RewardWeapon_Count} 획득!");
                 }
                 Console.ResetColor();
-                quest.Status = QuestStatus.Completed;
             }
             else
             {
