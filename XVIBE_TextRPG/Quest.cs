@@ -11,13 +11,13 @@ using System.Threading.Tasks;
  * - 퀘스트 정보 및 보상 조건 정리 리스트 생성
  * - 퀘스트 목록 출력 기능 
  * - 퀘스트 상세 정보 출력 기능
+ * - 퀘스트 수락/거절 시스템
+ * - 퀘스트 진행 중 목록 보기 기능
  * 
  * [작성해야 하는 것들]
- * - 퀘스트 수락/거절 시스템
  * - 퀘스트 진행 조건 자동 체크 기능
  * - 퀘스트 보상 지급 처리
- * - 퀘스트 진행 중 목록 보기 기능
- * - 플레이어 행동과 연동하여 퀘스트 조건 달성 확인 기능
+ * - 플레이어 행동과 연동하여 퀘스트 조건 달성 확인 기능 기존 코드에 적용하기
  * - 퀘스트 상태 저장/로드 기능
 */
 
@@ -122,7 +122,7 @@ namespace XVIBE_TextRPG
                 });
             }
         }
-        public static void ShowQuestList() // 퀘스트 보기랑 퀘스트 상세보기를 구현해야함
+        public static void ShowQuestList() 
         {
             Console.Clear();
 
@@ -262,15 +262,17 @@ namespace XVIBE_TextRPG
                     Console.WriteLine("\n퀘스트를 계속 진행합니다!");
                 }
             }
-            else if (quest.Status == QuestStatus.Completed)
+            else if (quest.Status == QuestStatus.Completed) // 완료한 퀘스트인 경우에는
             {
-                if(quest.IsRepeatable)
+                GiveQuestReward(quest);
+
+                if (quest.IsRepeatable) // 반복 퀘스트는 보상을 받고 난 뒤에 다시 수락하는 방식
                 {
                     Console.WriteLine("\n해당 퀘스트는 반복 진행이 가능합니다! \n퀘스트를 다시 수락합니까? (Y/N) >> ");
                     string input = Console.ReadLine().Trim().ToUpper();
                     if (input == "Y")
                     {
-                        quest.ResetIfRepeatable();
+                        quest.ResetIfRepeatable(); // 다시 수락하도록 리셋함
                         Console.WriteLine("\n해당 퀘스트를 다시 수락하여 진행합니다!");
                     }
                     else
@@ -287,6 +289,58 @@ namespace XVIBE_TextRPG
             Console.WriteLine("\n계속하려면 Enter를 누르세요...");
             Console.ReadLine();
         }
+
+        public static void CheckQuestConditions() // 퀘스트 달성조건 확인 함수 , 몬스터 처치후, 장비 장착후, 레벨업 직후 조건 검사하는 용도로 작성
+        {
+            foreach (var quest in questList)
+            {
+                if (quest.Status == QuestStatus.InProgress && quest.IsCompleted) // 진행중인 퀘스트이면서 IsCompleted가 참이면(퀘스트 조건 달성하면)
+                {
+                    quest.Status = QuestStatus.Completed; // 완료로 바꿔!
+
+                    Console.ForegroundColor = ConsoleColor.Yellow;
+                    Console.WriteLine($"\n*** 퀘스트 완료 ***\n{quest.QuestName}"); // 가독성 있게 노란색으로 표시!
+                    Console.ResetColor();
+
+                }
+            }
+        }
+
+        public static void GiveQuestReward(Quest quest) // 보상 지급 함수 상세 퀘스트 화면에서 지급할 생각
+        {
+            // 퀘스트를 완료하여 보상 획득이 가능합니다. 보상을 수령하시겠습니까? (Y/N)
+            Console.WriteLine($"[{quest.QuestName}]을(를) 완료하여 보상 획득이 가능합니다.\n보상을 수령하시겠습니까? (Y/N) >> ");
+            string input = Console.ReadLine().Trim().ToUpper();
+            if (input == "Y")
+            {
+                Console.ForegroundColor = ConsoleColor.Cyan;
+                Console.WriteLine($"\n[보상 지급] 퀘스트 '{quest.QuestName}' 완료!");
+
+                Player.Gold += quest.RewardGold; // 플레이어에게 골드 보상 지급
+                Console.WriteLine($"+ {quest.RewardGold} Gold 획득!");
+
+                Player.Exp += quest.RewardExp; // 플레이어에게 경험치 보상 지급
+                Console.WriteLine($"+ {quest.RewardExp} EXP 획득!");
+
+                if (quest.RewardWeapon != null && quest.RewardWeapon_Count > 0) // 보상 무기가 있다면?
+                {
+                    for (int i = 0; i < quest.RewardWeapon_Count; i++)
+                    {
+                        Equipment.Inventory.Add(quest.RewardWeapon); // 인벤토리 리스트(무기)에 추가하자
+                    }
+                    Console.WriteLine($"+ {quest.RewardWeapon.Name} ×{quest.RewardWeapon_Count} 획득!");
+                }
+                Console.ResetColor();
+            }
+            else
+            {
+                Console.WriteLine("\n퀘스트 보상 수락을 취소하였습니다.");
+                Console.WriteLine("\n계속하려면 Enter를 누르세요...");
+                Console.ReadLine();
+            }
+        }
+
+
 
     }
 
