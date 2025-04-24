@@ -20,12 +20,12 @@ namespace XVIBE_TextRPG
 
         public static int Gold { get; set; } = 1500; // 플레이어 골드
 
-        public static int MaxHP { get; set; } = 100; // 직업에 따라 결정되도록 수정 필요
+        public static int MaxHP { get; set; } = 100; 
         public static int CurrentHP { get; set; } = MaxHP;
-        public static int MaxMP { get; set; } = 50; // 직업에 따라 결정되도록 수정 필요
+        public static int MaxMP { get; set; } = 50; 
         public static int CurrentMP { get; set; } = MaxMP;
-        public static int TotalATK { get; set; } = 10; // 장비와 레벨에 따라 결정되도록 수정 필요
-        public static int TotalDEF { get; set; } = 5; // 장비와 레벨에 따라 결정되도록 수정 필요
+        public static int TotalATK { get; set; } = 10; 
+        public static int TotalDEF { get; set; } = 5; 
         
 
         // 전투 턴 동안 추가 공격력
