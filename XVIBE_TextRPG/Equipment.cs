@@ -1,9 +1,9 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
 namespace XVIBE_TextRPG
 {
-    internal class Equipment
+    public class Equipment
     {
         public static int ATKBonus { get; set; } = 0;
         public static int DEFBonus { get; set; } = 0;
@@ -11,12 +11,15 @@ namespace XVIBE_TextRPG
         // 무기 타입 정의
         public enum WeaponType { Sword, Dagger, Staff }
 
+        // 방어구 타입 정의
+        public enum ArmorType { Metal, Leather, Robe }
+
         // 무기 클래스 정의
         public class Weapon
         {
             public string Name { get; }
             public WeaponType Type { get; }
-            public int ATK { get; }
+            public int ATK { get; }            
             public int Price { get; }
 
             public Weapon(string name, WeaponType type, int atk, int price)
@@ -31,16 +34,61 @@ namespace XVIBE_TextRPG
             {
                 return $"{Name} (공격력: {ATK}, 가격: {Price}G)";
             }
+
+            public override bool Equals(object obj)
+            {
+                if (obj is Weapon other)
+                {
+                    return Name == other.Name && Type == other.Type && ATK == other.ATK && Price == other.Price ;
+                }
+                return false ;
+            }
+
+            public override int GetHashCode()
+            {
+                return HashCode.Combine(Name, Type, ATK, Price);
+            }
+        }
+
+        
+
+        // 방어구 클래스 정의
+        public class Armor
+        {
+            public string Name { get; }
+            public ArmorType Type { get; }
+            public int DEF { get; }
+            public int Price { get; }
+
+            public Armor(string name, ArmorType type, int dEF, int price)
+            {
+                Name = name;
+                Type = type;
+                DEF = dEF;
+                Price = price;
+            }
+
+            public override string ToString()
+            {
+                return $"{Name} (방어력: {DEF}, 가격: {Price})";
+            }
+
+            public override int GetHashCode()
+            {
+                return HashCode.Combine(Name, Type, DEF, Price);
+            }
         }
 
         // 인벤토리와 장비
         public static List<Weapon> Inventory = new List<Weapon>();
         public static Weapon EquippedWeapon = null;
+        public static List<Armor> ArmorInventory = new List<Armor>();
+        public static Armor EquippedArmor = null;
 
         // 무기 장착
         public static void Equip(Weapon weapon)
         {
-            if (EquippedWeapon == weapon)
+            if (EquippedWeapon != null && weapon.Equals(EquippedWeapon)) // 저장하고 불러왔을 때 참조가 달라 객체 비교로 변경
             {
                 Console.WriteLine($"{weapon.Name}은(는) 이미 장착되어 있습니다!");
                 return;
@@ -87,7 +135,7 @@ namespace XVIBE_TextRPG
                     for (int i = 0; i < Inventory.Count; i++)
                     {
                         var w = Inventory[i];
-                        string equippedTag = (w == EquippedWeapon) ? "[E] " : "";
+                        string equippedTag = (EquippedWeapon != null && w.Equals(EquippedWeapon)) ? "[E] " : ""; // 이 부분도 참조가 달라 적용 안되던 부분 수정
                         Console.WriteLine($"{i + 1}. {equippedTag}{w}");
                     }
                 }

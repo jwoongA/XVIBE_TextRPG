@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,6 +15,12 @@ namespace XVIBE_TextRPG
     {
         protected List<Enemy> monsters; // 몬스터 리스트
         protected List<string> battleLog; // 배틀 로그 리스트
+        protected List<Reward> rewards = new List<Reward>(); // 던전 클리어 보상 리스트
+
+        public Deonseon() // 생성자
+        {
+            rewards.Add(new GoldReward(GetGoldReward())); // 던전 클리어 골드 보상 rewards 리스트에 추가
+        }
 
         public virtual List<Enemy> GenerateMonsters() // 자식이 정의할 수 있도록 가상 메서드 만들기
         {
@@ -47,7 +55,7 @@ namespace XVIBE_TextRPG
         
         // 던전 시작 메서드
         public void StartDungeon()
-        {
+        {           
             if (monsters == null || monsters.Count == 0)
             {
                 Console.WriteLine("에러: 몬스터가 생성되지 않았습니다.");
@@ -115,6 +123,22 @@ namespace XVIBE_TextRPG
                 // 배틀 로그 출력
                 DisplayBattleLog();
 
+                // 경험치 획득
+                foreach (var monster in monsters)
+                {
+                    if (monster.Dead) // 적이 죽었을 경우
+                    {
+                        if(!monster.NotGetExperience) // 경험치 지급을 안 했을경우
+                        {
+                            GetExperience(monster);
+                            monster.NotGetExperience = true; // 경험치 지급 -완-
+                        }
+                    }    
+                }
+
+                // 레벨업
+                Player.LvUp(); 
+
                 // 전투 결과 확인
                 if (Player.CurrentHP <= 0 && monsters.TrueForAll(m => m.IsDead()))
                 {
@@ -161,7 +185,7 @@ namespace XVIBE_TextRPG
         // 기본 공격 메서드
         private void BasicAttack(Enemy target)
         {
-            int damage = Player.GetCurrentATK();
+            float damage = Player.GetCurrentATK();
 
             if (target.IsDead())
             {
@@ -174,12 +198,12 @@ namespace XVIBE_TextRPG
             }
             else if (Combat.IsCriticalHit()) // 조건문 걸어서 치명타 터지는 상황 아닌 상황 나누기
             {
-                int criticalDamage = target.TakeCriticalDamage(damage);// 몬스터에게 치명타 데미지 피해
+                int criticalDamage = target.TakeCriticalDamage((int)damage);// 몬스터에게 치명타 데미지 피해
                 battleLog.Add($"플레이어가 {target.Name}에게 {criticalDamage}의 [치명타] 피해를 입혔습니다!!!");
             }
             else
             {
-                target.TakeDamage(damage); // 일반 공격
+                target.TakeDamage((int)damage); // 일반 공격
                 battleLog.Add($"플레이어가 {target.Name}에게 {damage}의 피해를 입혔습니다.");
             }
         }
@@ -247,22 +271,82 @@ namespace XVIBE_TextRPG
             Console.ReadLine();
         }
 
+        // 전투 시작 시 경험치 저장
+        private int totalExpGained = 0;
+
         // 전투 승리 메서드
         public void BattleVictory()
         {
-            Console.WriteLine("[알림] 전투 승리 메서드는 아직 구현되지 않았습니다.");
-            Console.WriteLine("아무 키나 눌러주세요.");
+            GetRewards(); // 클리어 보상 호출
+
+            Console.WriteLine(new string('-', 40)); // 구분선
+            Console.WriteLine(@"
+ ___      ___ ___  ________ _________  ________  ________      ___    ___ ___       
+|\  \    /  /|\  \|\   ____\\___   ___\\   __  \|\   __  \    |\  \  /  /|\  \      
+\ \  \  /  / | \  \ \  \___\|___ \  \_\ \  \|\  \ \  \|\  \   \ \  \/  / | \  \     
+ \ \  \/  / / \ \  \ \  \       \ \  \ \ \  \\\  \ \   _  _\   \ \    / / \ \  \    
+  \ \    / /   \ \  \ \  \____   \ \  \ \ \  \\\  \ \  \\  \|   \/  /  /   \ \__\   
+   \ \__/ /     \ \__\ \_______\  \ \__\ \ \_______\ \__\\ _\ __/  / /      \|__|   
+    \|__|/       \|__|\|_______|   \|__|  \|_______|\|__|\|__|\___/ /           ___ 
+                                                             \|___|/           |\__\
+                                                                               \|__|
+                                                                                    
+");
+            Console.WriteLine();
+            Console.WriteLine($"보상으로 {GetGoldReward()} G를 획득했습니다.");
+            Console.WriteLine($"총 경험치 {totalExpGained}를 획득했습니다.");
+            Player.SavePlayerData();
+            Console.WriteLine();
+            Console.WriteLine("Enter 키를 눌러주세요.");
             Console.ReadLine();
         }
 
         // 전투 패배 메서드
         public void BattleDefeat()
         {
-            Console.WriteLine("[알림] 전투 패배 메서드는 아직 구현되지 않았습니다.");
-            Console.WriteLine("아무 키나 눌러주세요.");
+            Thread.Sleep(1000);
+            Console.Clear();
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine(@"
+ ________  ________  _____ ______   _______           ________  ___      ___ _______   ________     
+|\   ____\|\   __  \|\   _ \  _   \|\  ___ \         |\   __  \|\  \    /  /|\  ___ \ |\   __  \    
+\ \  \___|\ \  \|\  \ \  \\\__\ \  \ \   __/|        \ \  \|\  \ \  \  /  / | \   __/|\ \  \|\  \   
+ \ \  \  __\ \   __  \ \  \\|__| \  \ \  \_|/__       \ \  \\\  \ \  \/  / / \ \  \_|/_\ \   _  _\  
+  \ \  \|\  \ \  \ \  \ \  \    \ \  \ \  \_|\ \       \ \  \\\  \ \    / /   \ \  \_|\ \ \  \\  \| 
+   \ \_______\ \__\ \__\ \__\    \ \__\ \_______\       \ \_______\ \__/ /     \ \_______\ \__\\ _\ 
+    \|_______|\|__|\|__|\|__|     \|__|\|_______|        \|_______|\|__|/       \|_______|\|__|\|__|                                                                                                    
+");
+            Console.ResetColor();
+            Console.WriteLine();
+            Console.WriteLine($"{Player.Name}님은 힘이 다해 쓰러졌습니다.");
+            Console.WriteLine($"처음 마을에 도착했을 때로 회귀합니다.");
+            Console.WriteLine();
+            Console.WriteLine("Enter 키를 눌러 계속하세요.");
             Console.ReadLine();
+            Player.ResetAfterDeath();
         }
 
+        // 경험치 획득 메서드
+        private void GetExperience(Enemy Deadmonster)
+        {
+            Player.Exp += Deadmonster.Exp;
+            totalExpGained += Deadmonster.Exp; // 경험치 누적 저장
+        }
+
+        // 각 던전별로 골드 보상액을 다르게 설정
+        protected virtual int GetGoldReward()
+        {
+            return 500; // 500G
+        }
+
+        //보상 받기 메서드
+        private void GetRewards()
+        {
+            foreach (var reward in rewards) // rewards 리스트에 있는 보상 목록
+            {
+                reward.GetReward(); // Reward.cs에 있는 GetReward에서 보상을 받음
+            }
+        }
     }
 
     public class EasyDeonseon : Deonseon // 초급 던전
@@ -315,6 +399,11 @@ namespace XVIBE_TextRPG
             return monsterList;
         }
 
+        protected override int GetGoldReward() // override로 중급 던전 골드 보상 재정의
+        {
+            return 1000; // 1000G
+        }
+
         public NormalDeonseon() // 출력 메시지와 상속받은 던전 입장 메서드 실행
         {
             Enter();
@@ -341,6 +430,11 @@ namespace XVIBE_TextRPG
             }
 
             return monsterList;
+        }
+
+        protected override int GetGoldReward() // override로 고급 던전 골드 보상 재정의
+        {
+            return 2000; // 2000G
         }
 
         public HardDeonseon() // 출력 메시지와 상속받은 던전 입장 메서드 실행

@@ -3,13 +3,20 @@ using System.Collections.Generic;
 
 namespace XVIBE_TextRPG
 {
-    internal class Shop
+    public class Shop
     {
-        static List<Equipment.Weapon> storeWeapons = new List<Equipment.Weapon>()
+        public static List<Equipment.Weapon> storeWeapons = new List<Equipment.Weapon>()
         {
             new Equipment.Weapon("강철 검", Equipment.WeaponType.Sword, 10, 100),
             new Equipment.Weapon("은 단검", Equipment.WeaponType.Dagger, 7, 80),
             new Equipment.Weapon("마법 지팡이", Equipment.WeaponType.Staff, 12, 150),
+        };
+
+        public static List<Equipment.Armor> storeArmors = new List<Equipment.Armor>()
+        {
+            new Equipment.Armor("판금 갑옷", Equipment.ArmorType.Metal, 6, 100),
+            new Equipment.Armor("가죽 조끼", Equipment.ArmorType.Leather, 4, 80),
+            new Equipment.Armor("마법사의 로브", Equipment.ArmorType.Robe, 2, 150),
         };
 
         public static void EnterShop()
