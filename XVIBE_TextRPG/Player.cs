@@ -28,6 +28,10 @@ namespace XVIBE_TextRPG
         public static float TotalATK { get; set; } = 10; // 장비와 레벨에 따라 결정되도록 수정 필요
         public static int TotalDEF { get; set; } = 5; // 장비와 레벨에 따라 결정되도록 수정 필요
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> f9e2c716fa2f45dc4124564c6f273df7968dcee1
         // 전투 턴 동안 추가 공격력
         private static int TemporaryATKBoost { get; set; } = 0;
 
