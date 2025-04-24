@@ -28,8 +28,11 @@ namespace XVIBE_TextRPG
         public int TotalATK { get; set; }
         public int TotalDEF { get; set; }        
 
-        public List<WeaponData> Inventory { get; set; } = new List<WeaponData>();
+        public List<WeaponData> Inventory { get; set; } = new List<WeaponData>();        
         public WeaponData EquippedWeapon { get; set; }
+
+        public List<ArmorData> ArmorInventory { get; set; } = new List<ArmorData>();
+        public ArmorData EquippedArmor { get; set; }
     }
 
     public class WeaponData
@@ -37,6 +40,14 @@ namespace XVIBE_TextRPG
         public string Name { get; set; }
         public string Type { get; set; }
         public int ATK { get; set; }
+        public int Price { get; set; }
+    }
+
+    public class ArmorData
+    {
+        public string Name { get; set; }
+        public string Type { get; set; }
+        public int DEF { get; set; }
         public int Price { get; set; }
     }
 }

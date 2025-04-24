@@ -21,52 +21,121 @@ namespace XVIBE_TextRPG
 
         public static void EnterShop()
         {
-            while (true)
+            Console.Clear();
+            Console.WriteLine(@"
+ _____________________________________________
+|                _                            |
+|  __      _____| | ___ ___  _ __ ___   ___   |
+|  \ \ /\ / / _ \ |/ __/ _ \| '_ ` _ \ / _ \  |
+|   \ V  V /  __/ | (_| (_) | | | | | |  __/  |
+|    \_/\_/ \___|_|\___\___/|_| |_| |_|\___|  |
+|_____________________________________________|                                        
+");
+            Console.WriteLine();
+            Console.WriteLine("1. 무기 상점\n2. 방어구 상점\n0. 나가기\n");
+            Console.Write(">>");
+            string whichStore = Console.ReadLine();
+
+            if (whichStore == "1")
             {
-                Console.Clear();
-                Console.WriteLine("===== 무기 상점 =====");
-                Console.WriteLine($"보유 골드: {Player.Gold} G\n");
-
-                for (int i = 0; i < storeWeapons.Count; i++)
+                while (true)
                 {
-                    var w = storeWeapons[i];
-                    Console.WriteLine($"{i + 1}. {w}");
-                }
+                    Console.Clear();
+                    Console.WriteLine("===== 무기 상점 =====");
+                    Console.WriteLine($"보유 골드: {Player.Gold} G\n");
 
-                Console.WriteLine("0. 나가기");
-                Console.Write("\n구매할 무기 번호를 입력하세요: ");
-                string input = Console.ReadLine();
-
-                if (input == "0")
-                    break;
-
-                if (int.TryParse(input, out int choice) && choice > 0 && choice <= storeWeapons.Count)
-                {
-                    var selected = storeWeapons[choice - 1];
-
-                    // 중복 구매 방지
-                    if (Equipment.Inventory.Contains(selected))
+                    for (int i = 0; i < storeWeapons.Count; i++)
                     {
-                        Console.WriteLine("\n 이미 보유 중인 무기입니다.");
+                        var w = storeWeapons[i];
+                        Console.WriteLine($"{i + 1}. {w}");
                     }
-                    else if (Player.Gold >= selected.Price)
+
+                    Console.WriteLine("0. 나가기");
+                    Console.Write("\n구매할 무기 번호를 입력하세요: ");
+                    string input = Console.ReadLine();
+
+                    if (input == "0")
+                        break;
+
+                    if (int.TryParse(input, out int choice) && choice > 0 && choice <= storeWeapons.Count)
                     {
-                        Equipment.Inventory.Add(selected);
-                        Player.Gold -= selected.Price;
-                        Console.WriteLine($"\n {selected.Name}을(를) 구매했습니다!");
+                        var selected = storeWeapons[choice - 1];
+
+                        // 중복 구매 방지
+                        if (Equipment.Inventory.Contains(selected))
+                        {
+                            Console.WriteLine("\n 이미 보유 중인 무기입니다.");
+                        }
+                        else if (Player.Gold >= selected.Price)
+                        {
+                            Equipment.Inventory.Add(selected);
+                            Player.Gold -= selected.Price;
+                            Console.WriteLine($"\n {selected.Name}을(를) 구매했습니다!");
+                        }
+                        else
+                        {
+                            Console.WriteLine("\n 골드가 부족합니다!");
+                        }
                     }
                     else
                     {
-                        Console.WriteLine("\n 골드가 부족합니다!");
+                        Console.WriteLine("\n잘못된 입력입니다.");
                     }
+
+                    Console.WriteLine("\nEnter를 눌러 계속...");
+                    Console.ReadLine();
                 }
-                else
+            }
+            else if (whichStore == "2")
+            {
+                while (true)
                 {
-                    Console.WriteLine("\n잘못된 입력입니다.");
+                    Console.Clear();
+                    Console.WriteLine("===== 방어구 상점 =====");
+                    Console.WriteLine($"보유 골드: {Player.Gold} G\n");
+
+                    for (int i = 0; i < storeArmors.Count; i++)
+                    {
+                        var a = storeArmors[i];
+                        Console.WriteLine($"{i + 1}. {a}");
+                    }
+
+                    Console.WriteLine("0. 나가기");
+                    Console.Write("\n구매할 방어구 번호를 입력하세요: ");
+                    string input = Console.ReadLine();
+
+                    if (input == "0")
+                        break;
+
+                    if (int.TryParse(input, out int choice) && choice > 0 && choice <= storeArmors.Count)
+                    {
+                        var selected = storeArmors[choice - 1];
+
+                        // 중복 구매 방지
+                        if (Equipment.ArmorInventory.Contains(selected))
+                        {
+                            Console.WriteLine("\n 이미 보유 중인 방어구입니다.");
+                        }
+                        else if (Player.Gold >= selected.Price)
+                        {
+                            Equipment.ArmorInventory.Add(selected);
+                            Player.Gold -= selected.Price;
+                            Console.WriteLine($"\n {selected.Name}을(를) 구매했습니다!");
+                        }
+                        else
+                        {
+                            Console.WriteLine("\n 골드가 부족합니다!");
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine("\n잘못된 입력입니다.");
+                    }
+
+                    Console.WriteLine("\nEnter를 눌러 계속...");
+                    Console.ReadLine();
                 }
 
-                Console.WriteLine("\nEnter를 눌러 계속...");
-                Console.ReadLine();
             }
         }
     }
