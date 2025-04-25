@@ -23,7 +23,7 @@ namespace XVIBE_TextRPG
                 Console.WriteLine($"현재 마나 : {Player.CurrentMP} / {Player.MaxMP}");
                 Console.WriteLine($"보유 골드 : {Player.Gold}");
                 Console.WriteLine();
-                Console.Write("1. 휴식하기\n2. 나가기\n>>");
+                Console.Write("1. 휴식하기\n0. 나가기\n>>");
 
                 string input = Console.ReadLine();
                 bool rest = false;
@@ -51,7 +51,7 @@ namespace XVIBE_TextRPG
                             Console.ReadLine();
                             rest = true;
                             break;
-                        case "2":
+                        case "0":
                             restConfirmed = true;
                             rest = true;
                             break;
