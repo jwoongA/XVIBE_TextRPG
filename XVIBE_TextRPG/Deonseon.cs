@@ -267,6 +267,8 @@ namespace XVIBE_TextRPG
                 }
                 Quest.CheckQuestConditions();
             }
+
+            Player.EndTurn(); // 전투 종료 시 공격력 버프 초기화
         }
 
         // 스킬 사용 메서드

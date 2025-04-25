@@ -109,6 +109,7 @@ namespace XVIBE_TextRPG
             }
 
             EquippedWeapon = weapon;
+            Quest.CheckQuestConditions();
             ATKBonus = weapon.ATK;
             Console.WriteLine($"{weapon.Name}을(를) 새로 장착했습니다!");
         }
