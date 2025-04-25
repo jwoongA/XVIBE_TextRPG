@@ -17,7 +17,7 @@ namespace XVIBE_TextRPG
                 Console.Clear();
                 Console.WriteLine("[휴식하기]");
                 Console.WriteLine();
-                Console.WriteLine("500 G 를 내면 체력과 마나를 회복할 수 있습니다.");
+                Console.WriteLine("1500 G 를 내면 체력과 마나를 회복할 수 있습니다.");
                 Console.WriteLine();
                 Console.WriteLine($"현재 체력 : {Player.CurrentHP} / {Player.MaxHP}");
                 Console.WriteLine($"현재 마나 : {Player.CurrentMP} / {Player.MaxMP}");
