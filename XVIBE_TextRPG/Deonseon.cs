@@ -196,7 +196,7 @@ namespace XVIBE_TextRPG
                     Console.WriteLine("플레이어와 몬스터가 동시에 쓰러졌습니다. 플레이어의 승리로 간주됩니다!");
                     BattleVictory();
                     Player.EndTurn(); // 전투 종료 시 공격력 초기화
-                    return true;                    
+                    return true;
                 }
                 else if (Player.CurrentHP <= 0)
                 {

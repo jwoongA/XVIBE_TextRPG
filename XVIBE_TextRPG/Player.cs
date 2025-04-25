@@ -379,7 +379,7 @@ namespace XVIBE_TextRPG
             // 레벨, 경험치, 골드 초기화
             Level = 1;
             Exp = 0;
-            Gold = 1500;
+            Gold = 600;
 
             // 장비 인벤토리 초기화
             Equipment.Inventory.Clear();
@@ -409,7 +409,7 @@ namespace XVIBE_TextRPG
 
             // 체력, 마나는 최대치로 회복
             CurrentHP = MaxHP;
-            CurrentMP = MaxMP;            
+            CurrentMP = MaxMP;
         }
 
         // 레벨업
