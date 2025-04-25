@@ -135,7 +135,7 @@ namespace XVIBE_TextRPG
             Player.UpdateStats();
         }
 
-        // 무기 해제
+        // 장비 해제
         public static void UnequipAll()
         {
             bool unequipped = false;

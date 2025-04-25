@@ -75,6 +75,8 @@ namespace XVIBE_TextRPG
 
             public static void QuestListDB()
             {
+                if (questList.Count > 0) return; // 초기화 된 경우면 다시 안하도록 설정
+
                 questList.Add(new Quest
                 {
                     Index = 1,
@@ -366,11 +368,26 @@ namespace XVIBE_TextRPG
 
                 if (quest.RewardWeapon != null && quest.RewardWeapon_Count > 0) // 보상 무기가 있다면?
                 {
-                    for (int i = 0; i < quest.RewardWeapon_Count; i++)
+                    // 인벤토리에 무기가 보유한 상태인지 확인
+                    bool alreadyOwned = Equipment.Inventory.Any(w =>
+                    w.Name == quest.RewardWeapon.Name &&
+                    w.ATK == quest.RewardWeapon.ATK &&
+                    w.Price == quest.RewardWeapon.Price);
+
+                    if (alreadyOwned)
                     {
-                        Equipment.Inventory.Add(quest.RewardWeapon); // 인벤토리 리스트(무기)에 추가하자
+                        int altRewardGold = quest.RewardWeapon.Price / 2; // 대체 보상 (보상 무기의 가격을 나눈 값)
+                        Player.Gold += altRewardGold;
+                        Console.WriteLine($"이미 {quest.RewardWeapon.Name}을 보유 중이라, 보상 대신 {altRewardGold}G 를 지급합니다.");
                     }
-                    Console.WriteLine($"+ {quest.RewardWeapon.Name} ×{quest.RewardWeapon_Count} 획득!");
+                    else
+                    {
+                        for (int i = 0; i < quest.RewardWeapon_Count; i++)
+                        {
+                            Equipment.Inventory.Add(quest.RewardWeapon); // 인벤토리 리스트(무기)에 추가하자
+                        }
+                        Console.WriteLine($"+ {quest.RewardWeapon.Name} ×{quest.RewardWeapon_Count} 획득!");
+                    }
                 }
                 Console.ResetColor();
 
