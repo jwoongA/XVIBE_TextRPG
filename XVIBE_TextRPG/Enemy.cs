@@ -86,7 +86,25 @@ namespace XVIBE_TextRPG
 
             public static bool IsMiss()
             {
-                return randomNumber.NextDouble() < 0.10; // 0~1미만의 실수를 무작위 생성해서 0.10보다 작으면 회피 판정 ('기본공격'에만 적용)
+                    return randomNumber.NextDouble() < 0.10; // 0~1미만의 실수를 무작위 생성해서 0.10보다 작으면 회피 판정 ('기본공격'에만 적용)
+            }
+            //추가 회피율을 고려한 회피 판정
+            public static bool IsMiss(bool isPlayer)
+            {
+                double evasionChance;
+
+                if (isPlayer)
+                {
+                    // 플레이어의 회피율: 기본 회피율 + 추가 회피율
+                    evasionChance = (0.10f + Player.AdditionalEvasionRate);
+                }
+                else
+                {
+                    // 몬스터의 고정 회피율
+                    evasionChance = 0.10; // 몬스터의 기본 회피율
+                }
+
+                return randomNumber.NextDouble() < evasionChance; // 회피 판정
             }
         }
 

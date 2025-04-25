@@ -15,9 +15,9 @@ using System.Threading.Tasks;
  * - 퀘스트 진행 중 목록 보기 기능
  * - 퀘스트 진행 조건 자동 체크 기능
  * - 퀘스트 보상 지급 처리
+ * - 플레이어 행동과 연동하여 퀘스트 조건 달성 확인 기능 기존 코드에 적용하기
  * 
  * [작성해야 하는 것들]
- * - 플레이어 행동과 연동하여 퀘스트 조건 달성 확인 기능 기존 코드에 적용하기
  * - 퀘스트 상태 저장/로드 기능
 */
 
@@ -62,6 +62,8 @@ namespace XVIBE_TextRPG
 
                 if (Required_TotalDef > 0 && Player.TotalDEF >= Required_TotalDef)
                     return true;
+                if (Equipment.EquippedWeapon != null)
+                    return true;
 
                 return false;
             }
@@ -96,7 +98,7 @@ namespace XVIBE_TextRPG
                     Description = "세상에.. 자네 아직도 장비 없이 맨손으로 싸우는 건 아니겠지?? \n어서 빨리, 상점에서 장비를 구매해서 장착해보게나 \n모험은 위험하니 철저히 준비하게!",
                     RewardGold = 150,
                     RewardExp = 50,
-                    Status = QuestStatus.NotAccepted, // public static Weapon EquippedWeapon = null 요놈 활용하여 장비 장착하면 클리어
+                    Status = QuestStatus.NotAccepted, // Equipment.EquippedWeapon != null 요놈 활용하여 장비 장착하면 클리어
                     IsRepeatable = false
                 });
 
@@ -163,12 +165,28 @@ namespace XVIBE_TextRPG
                         QuestStatus.Finished => "완료"
                     };
 
+                    ConsoleColor statusColor = quest.Status switch
+                    {
+                        QuestStatus.NotAccepted => ConsoleColor.Gray,
+                        QuestStatus.InProgress => ConsoleColor.Cyan,
+                        QuestStatus.Completed => ConsoleColor.Yellow,
+                        QuestStatus.Finished => ConsoleColor.Green,
+                        _ => ConsoleColor.White
+                    };
+
                     string Reapeatable_Quest = quest.IsRepeatable ? "[반복]" : "[----]";
 
-                    Console.WriteLine($" {quest.Index}. [{statusText}] {Reapeatable_Quest} {quest.QuestName}");
+                    Console.Write($" {quest.Index}.");
+                    Console.ForegroundColor = statusColor;
+                    Console.Write($" [{statusText}]");
+                    Console.ResetColor();
+
+                    Console.WriteLine($" {Reapeatable_Quest} {quest.QuestName}");
                 }
+
                 Console.WriteLine("\n※ 번호를 입력하면 상세 정보를 확인할 수 있습니다.");
                 Console.WriteLine("※ 0을 입력하면 목록에서 나갑니다.");
+                Console.WriteLine("※ 퀘스트 정보를 갱신하려면 메인 메뉴로 나갔다가 다시 들어오세요.");
                 Console.Write(">> ");
 
                 string input = Console.ReadLine();
@@ -214,13 +232,16 @@ namespace XVIBE_TextRPG
             Console.WriteLine($"[{quest.QuestName}]\n");
             Console.WriteLine($"{quest.Description}");
 
+            // [퀘스트 조건]
             if (quest.RequiredKillCount > 0)
             { Console.WriteLine($"\n※ 달성 조건: 몬스터 처치 {CurrentKillCount} / {quest.RequiredKillCount}"); }
-            // CurrentKillCount는 실시간 연동 가능하게 로직 만들어야함
 
-            // 장비 장착 퀘스트는 아직 구현 안되어서 나중에 추가해야함
-
-            // [퀘스트 조건]
+            if (quest.Index == 2)
+            {
+                string equippedText = Equipment.EquippedWeapon != null ? "장착 완료" : "미장착";
+                Console.WriteLine($"\n※ 달성 조건: 무기 장착 여부 - {equippedText}");
+            }
+            
             if (quest.Required_TotalAtk > 0)
             { Console.WriteLine($"\n※ 달성 조건: 공격력 {Player.TotalATK} / {quest.Required_TotalAtk}"); }
 
@@ -238,7 +259,7 @@ namespace XVIBE_TextRPG
                 Console.WriteLine($"- 장비 보상: {quest.RewardWeapon.Name} x{quest.RewardWeapon_Count}");
             }
 
-            Console.WriteLine("\n==============================");
+            Console.WriteLine("\n===============================================");
 
             if (quest.Status == QuestStatus.NotAccepted) // 퀘스트가 수락중이 아닐때는
             {
@@ -293,7 +314,6 @@ namespace XVIBE_TextRPG
                 }
                 else
                 {
-                    quest.Status = QuestStatus.Finished;
                     Console.WriteLine("\n이 퀘스트는 완료되었습니다. 다른 퀘스트를 선택하세요!");
                 }
             }
@@ -306,6 +326,19 @@ namespace XVIBE_TextRPG
         {
             foreach (var quest in questList)
             {
+                if (quest.Status != QuestStatus.InProgress) continue;
+
+                // 장비 장착 퀘스트
+                if (quest.Index == 2 && Equipment.EquippedWeapon != null)
+                {
+                    quest.Status = QuestStatus.Completed;
+
+                    Console.ForegroundColor = ConsoleColor.Yellow;
+                    Console.WriteLine($"\n*** 퀘스트 완료 ***\n{quest.QuestName}");
+                    Console.ResetColor();
+                    continue;
+                }
+
                 if (quest.Status == QuestStatus.InProgress && quest.IsCompleted) // 진행중인 퀘스트이면서 IsCompleted가 참이면(퀘스트 조건 달성하면)
                 {
                     quest.Status = QuestStatus.Completed; // 완료로 바꿔!
@@ -357,10 +390,21 @@ namespace XVIBE_TextRPG
                     }
                 }
                 Console.ResetColor();
+
+                if (quest.IsRepeatable)
+                {
+                    Quest.CurrentKillCount = 0; // 반복 퀘스트라면 초기화 후 다시 진행 가능
+                    quest.Status = QuestStatus.NotAccepted;
+                }
+                else
+                {
+                    quest.Status = QuestStatus.Finished;
+                }
             }
             else
             {
                 Console.WriteLine("\n퀘스트 보상 수락을 취소하였습니다.");
+                Console.WriteLine("※ 보상은 퀘스트 상세 보기에서 다시 수령할 수 있습니다.");
                 Console.WriteLine("\n계속하려면 Enter를 누르세요...");
                 Console.ReadLine();
             }

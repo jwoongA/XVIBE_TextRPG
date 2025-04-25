@@ -29,6 +29,10 @@ namespace XVIBE_TextRPG
 
         public static float TotalATK { get; set; } = 10; // 장비와 레벨에 따라 결정되도록 수정 필요
         public static int TotalDEF { get; set; } = 5; // 장비와 레벨에 따라 결정되도록 수정 필요
+        
+
+        public static float AdditionalEvasionRate { get; set; } = 0; // 추가 회피율
+
 
         // 전투 턴 동안 추가 공격력
         private static int TemporaryATKBoost { get; set; } = 0;
@@ -43,16 +47,19 @@ namespace XVIBE_TextRPG
                     MaxHP = 100;
                     TotalATK = 10 + Equipment.ATKBonus + Level;
                     TotalDEF = 5 + Equipment.DEFBonus + Level / 2;
+                    Quest.CheckQuestConditions();
                     break;
                 case "마법사":
                     MaxHP = 60;
                     TotalATK = 15 + Equipment.ATKBonus + Level;
                     TotalDEF = 3 + Equipment.DEFBonus + Level / 2;
+                    Quest.CheckQuestConditions();
                     break;
                 case "도적":
                     MaxHP = 80;
                     TotalATK = 12 + Equipment.ATKBonus + Level;
                     TotalDEF = 4 + Equipment.DEFBonus + Level / 2;
+                    Quest.CheckQuestConditions();
                     break;
                 default:
                     MaxHP = 100;
@@ -90,10 +97,11 @@ namespace XVIBE_TextRPG
             return TotalATK + TemporaryATKBoost;
         }
 
-        // 턴 종료 시 추가 공격력 초기화
+        // 턴 종료 시 추가 공격력, 회피율 초기화
         public static void EndTurn()
         {
-            TemporaryATKBoost = 0;
+            TemporaryATKBoost = 0; // 턴 종료 시 공격력 초기화
+            AdditionalEvasionRate = 0; // 턴 종료 시 회피율 초기화
         }
 
         // 도적 스킬: 단일 대상에게 1.5배 피해
@@ -343,6 +351,7 @@ namespace XVIBE_TextRPG
             Equipment.ArmorInventory.Clear();
             Equipment.EquippedArmor = null;
             Equipment.DEFBonus = 0;
+            Player.EndTurn(); // 전투 종료 시 추가 능력치 초기화
 
             //직업에 따른 능력치 초기화
             UpdateStats();
@@ -374,6 +383,7 @@ namespace XVIBE_TextRPG
                 Console.WriteLine($"Exp:{Exp + 10} -> {remainderExp}\n");
                 Console.WriteLine("아무 키나 눌러주세요.\n");
                 Console.ReadLine();
+                Quest.CheckQuestConditions(); // 퀘스트 필요 공격력, 방어력 달성했는지 체크
             }
         }
     }
