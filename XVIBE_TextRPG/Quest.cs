@@ -51,18 +51,19 @@ namespace XVIBE_TextRPG
         {
             get
             {
-                if (RequiredKillCount > 0 && CurrentKillCount >= RequiredKillCount)
+                if (Index == 1 && RequiredKillCount > 0 && CurrentKillCount >= RequiredKillCount)
                     return true;
 
-                if (Required_Level > 0 && Player.Level >= Required_Level)
+                if (Index == 2 && Equipment.EquippedWeapon != null)
                     return true;
 
-                if (Required_TotalAtk > 0 && Player.TotalATK >= Required_TotalAtk)
+                if (Index == 3 && Required_TotalAtk > 0 && Player.TotalATK >= Required_TotalAtk)
                     return true;
 
-                if (Required_TotalDef > 0 && Player.TotalDEF >= Required_TotalDef)
+                if (Index == 4 && Required_TotalDef > 0 && Player.TotalDEF >= Required_TotalDef)
                     return true;
-                if (Equipment.EquippedWeapon != null)
+
+                if (Index == 5 && Required_Level > 0 && Player.Level >= Required_Level)
                     return true;
 
                 return false;
