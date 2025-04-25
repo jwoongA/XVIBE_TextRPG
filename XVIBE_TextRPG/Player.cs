@@ -27,7 +27,7 @@ namespace XVIBE_TextRPG
         public static int MaxMP { get; set; } = 50; // 직업에 따라 결정되도록 수정 필요
         public static int CurrentMP { get; set; } = MaxMP;
 
-        public static float TotalATK { get; set; } = 10; // 장비와 레벨에 따라 결정되도록 수정 필요
+        public static int TotalATK { get; set; } = 10; // 장비와 레벨에 따라 결정되도록 수정 필요
         public static int TotalDEF { get; set; } = 5; // 장비와 레벨에 따라 결정되도록 수정 필요
         
 
@@ -46,24 +46,24 @@ namespace XVIBE_TextRPG
             {
                 case "전사":
                     MaxHP = 130;
-                    TotalATK = 10 + Equipment.ATKBonus + Level;
-                    TotalDEF = 10 + Equipment.DEFBonus + Level / 2;
+                    TotalATK = 10 + Equipment.ATKBonus + (Level - 1);
+                    TotalDEF = 10 + Equipment.DEFBonus + ((Level - 1) * 2);
                     MaxMP = 20;
                     BaseEvasionRate = 0.00f;
                     Quest.CheckQuestConditions();
                     break;
                 case "마법사":
                     MaxHP = 80;
-                    TotalATK = 17 + Equipment.ATKBonus + Level;
-                    TotalDEF = 3 + Equipment.DEFBonus + Level / 2;
+                    TotalATK = 17 + Equipment.ATKBonus + (Level - 1);
+                    TotalDEF = 3 + Equipment.DEFBonus + ((Level - 1) * 2);
                     MaxMP = 80;
                     BaseEvasionRate = 0.05f;
                     Quest.CheckQuestConditions();
                     break;
                 case "도적":
                     MaxHP = 100;
-                    TotalATK = 13 + Equipment.ATKBonus + Level;
-                    TotalDEF = 5 + Equipment.DEFBonus + Level / 2;
+                    TotalATK = 13 + Equipment.ATKBonus + (Level - 1);
+                    TotalDEF = 5 + Equipment.DEFBonus + ((Level - 1) * 2);
                     MaxMP = 40;
                     BaseEvasionRate = 0.15f;
                     Quest.CheckQuestConditions();
@@ -148,7 +148,7 @@ namespace XVIBE_TextRPG
                 {
                     foreach (var target in targets)
                     {
-                        int criticalDamage = target.TakeCriticalDamage((int)TotalATK); // 마법사 스킬로 모든 적에게 강려크한 크리티컬 데미지 입힘
+                        int criticalDamage = target.TakeCriticalDamage(TotalATK); // 마법사 스킬로 모든 적에게 강려크한 크리티컬 데미지 입힘
                         Console.WriteLine($"마법사의 스킬을 사용했습니다! {target.Name}에게 {criticalDamage}의 [치명타]피해를 입혔습니다!!!");
                     }
                 }
@@ -156,7 +156,7 @@ namespace XVIBE_TextRPG
                 {
                     foreach (var target in targets)
                     {
-                        target.TakeDamage((int)TotalATK);
+                        target.TakeDamage(TotalATK);
                         Console.WriteLine($"마법사의 스킬을 사용했습니다! {target.Name}에게 {TotalATK}의 피해를 입혔습니다.");
                     }
                 }
@@ -176,8 +176,8 @@ namespace XVIBE_TextRPG
             Console.WriteLine($"레벨     : {Level}");
             Console.WriteLine($"경험치   : {Exp}");
             Console.WriteLine($"체력     : {CurrentHP} / {MaxHP}");
-            Console.WriteLine($"공격력   : {TotalATK} (+{Equipment.ATKBonus + Level})");
-            Console.WriteLine($"방어력   : {TotalDEF} (+{Equipment.DEFBonus + Level / 2})");
+            Console.WriteLine($"공격력   : {TotalATK} (+{Equipment.ATKBonus + (Level - 1)})");
+            Console.WriteLine($"방어력   : {TotalDEF} (+{Equipment.DEFBonus + ((Level - 1) * 2)})");
             Console.WriteLine($"보유 골드: {Gold} G");
             Console.WriteLine("\nEnter 키를 누르면 이전 화면으로 돌아갑니다.");
             Console.ReadLine();
@@ -446,7 +446,7 @@ namespace XVIBE_TextRPG
             {
                 remainderExp = Exp - 100; // 레벨업 하고 남은 경험치
                 Level++;
-                TotalATK += 1f;
+                TotalATK += 1;
                 TotalDEF += 2;
                 Exp = remainderExp;
 
@@ -458,9 +458,9 @@ namespace XVIBE_TextRPG
                 Console.ForegroundColor = ConsoleColor.Green;
                 Console.WriteLine($"Hp.{CurrentHP} -> {MaxHP}");
                 Console.WriteLine($"Mp.{CurrentMP} -> {MaxMP}");
-                Console.WriteLine($"공격력: {TotalATK - 0.5f} -> {TotalATK}");
-                Console.WriteLine($"방어력:{TotalDEF - 1} -> {TotalDEF}");
-                Console.WriteLine($"Exp:{Exp + 10} -> {remainderExp}\n");
+                Console.WriteLine($"공격력: {TotalATK - 1} -> {TotalATK}");
+                Console.WriteLine($"방어력:{TotalDEF - 2} -> {TotalDEF}");
+                Console.WriteLine($"Exp:{Exp + 100} -> {remainderExp}\n");
                 Console.ResetColor();
 
                 Console.WriteLine("아무 키나 눌러주세요.\n");
