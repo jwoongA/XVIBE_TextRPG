@@ -62,6 +62,8 @@ namespace XVIBE_TextRPG
 
                 if (Required_TotalDef > 0 && Player.TotalDEF >= Required_TotalDef)
                     return true;
+                if (Equipment.EquippedWeapon != null)
+                    return true;
 
                 return false;
             }
@@ -94,7 +96,7 @@ namespace XVIBE_TextRPG
                     Description = "세상에.. 자네 아직도 장비 없이 맨손으로 싸우는 건 아니겠지?? \n어서 빨리, 상점에서 장비를 구매해서 장착해보게나 \n모험은 위험하니 철저히 준비하게!",
                     RewardGold = 150,
                     RewardExp = 50,
-                    Status = QuestStatus.NotAccepted, // public static Weapon EquippedWeapon = null 요놈 활용하여 장비 장착하면 클리어
+                    Status = QuestStatus.NotAccepted, // Equipment.EquippedWeapon != null 요놈 활용하여 장비 장착하면 클리어
                     IsRepeatable = false
                 });
 
@@ -212,13 +214,16 @@ namespace XVIBE_TextRPG
             Console.WriteLine($"[{quest.QuestName}]\n");
             Console.WriteLine($"{quest.Description}");
 
+            // [퀘스트 조건]
             if (quest.RequiredKillCount > 0)
             { Console.WriteLine($"\n※ 달성 조건: 몬스터 처치 {CurrentKillCount} / {quest.RequiredKillCount}"); }
-            // CurrentKillCount는 실시간 연동 가능하게 로직 만들어야함
 
-            // 장비 장착 퀘스트는 아직 구현 안되어서 나중에 추가해야함
-
-            // [퀘스트 조건]
+            if (quest.Index == 2)
+            {
+                string equippedText = Equipment.EquippedWeapon != null ? "장착 완료" : "미장착";
+                Console.WriteLine($"\n※ 달성 조건: 무기 장착 여부 - {equippedText}");
+            }
+            
             if (quest.Required_TotalAtk > 0)
             { Console.WriteLine($"\n※ 달성 조건: 공격력 {Player.TotalATK} / {quest.Required_TotalAtk}"); }
 
@@ -236,7 +241,7 @@ namespace XVIBE_TextRPG
                 Console.WriteLine($"- 장비 보상: {quest.RewardWeapon.Name} x{quest.RewardWeapon_Count}");
             }
 
-            Console.WriteLine("\n==============================");
+            Console.WriteLine("\n===============================================");
 
             if (quest.Status == QuestStatus.NotAccepted) // 퀘스트가 수락중이 아닐때는
             {
@@ -304,6 +309,19 @@ namespace XVIBE_TextRPG
         {
             foreach (var quest in questList)
             {
+                if (quest.Status != QuestStatus.InProgress) continue;
+
+                // 장비 장착 퀘스트
+                if (quest.Index == 2 && Equipment.EquippedWeapon != null)
+                {
+                    quest.Status = QuestStatus.Completed;
+
+                    Console.ForegroundColor = ConsoleColor.Yellow;
+                    Console.WriteLine($"\n*** 퀘스트 완료 ***\n{quest.QuestName}");
+                    Console.ResetColor();
+                    continue;
+                }
+
                 if (quest.Status == QuestStatus.InProgress && quest.IsCompleted) // 진행중인 퀘스트이면서 IsCompleted가 참이면(퀘스트 조건 달성하면)
                 {
                     quest.Status = QuestStatus.Completed; // 완료로 바꿔!

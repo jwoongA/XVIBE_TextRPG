@@ -42,16 +42,19 @@ namespace XVIBE_TextRPG
                     MaxHP = 100;
                     TotalATK = 10 + Equipment.ATKBonus + Level;
                     TotalDEF = 5 + Equipment.DEFBonus + Level / 2;
+                    Quest.CheckQuestConditions();
                     break;
                 case "마법사":
                     MaxHP = 60;
                     TotalATK = 15 + Equipment.ATKBonus + Level;
                     TotalDEF = 3 + Equipment.DEFBonus + Level / 2;
+                    Quest.CheckQuestConditions();
                     break;
                 case "도적":
                     MaxHP = 80;
                     TotalATK = 12 + Equipment.ATKBonus + Level;
                     TotalDEF = 4 + Equipment.DEFBonus + Level / 2;
+                    Quest.CheckQuestConditions();
                     break;
                 default:
                     MaxHP = 100;
@@ -343,6 +346,7 @@ namespace XVIBE_TextRPG
                 Console.WriteLine($"Exp:{Exp + 10} -> {remainderExp}\n");
                 Console.WriteLine("아무 키나 눌러주세요.\n");
                 Console.ReadLine();
+                Quest.CheckQuestConditions(); // 퀘스트 필요 공격력, 방어력 달성했는지 체크
             }
         }
     }
