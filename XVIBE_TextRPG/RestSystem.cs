@@ -28,14 +28,16 @@ namespace XVIBE_TextRPG
                 string input = Console.ReadLine();
                 bool rest = false;
 
+                // 복합포션(대) 보다 효율 안나오게 해야 포션 시스템이 의미있어짐
+
                 while (!rest)
                 {
                     switch (input)
                     {
                         case "1":
-                            if (Player.Gold >= 500)
+                            if (Player.Gold >= 1500)
                             {
-                                Player.Gold -= 500;
+                                Player.Gold -= 1500;
                                 Player.CurrentHP = Math.Min(Player.CurrentHP + 100, Player.MaxHP);
                                 Player.CurrentMP = Math.Min(Player.CurrentMP + 50, Player.MaxMP);
 

@@ -72,7 +72,29 @@ namespace XVIBE_TextRPG
 
         public class QuestManager
         {
-             // 퀘스트 정보 및 보상을 정리하는 리스트
+            // [퀘스트 보상 밸런스 기준표]
+
+            // ▶ 1. 레벨업 기준
+            //    - 1레벨 업에 필요한 경험치: 100 EXP 기준으로 설계
+            //    - 1~2개 퀘스트 또는 1~2회 던전으로 1레벨 업 가능하도록 조정
+
+            // ▶ 2. 경험치 보상 계산 공식
+            //    - 반복 퀘스트: 평균 몬스터 처치 EXP × 킬 수 × 0.8
+            //    - 일반 퀘스트: 킬 수 × 6~10 정도, 조건 난이도 따라 차등
+            //    - 스탯 조건형 퀘스트(EX: 공격력 30, 방어력 20 등)는 200~300 EXP 제공
+            //    - 레벨 조건 퀘스트(EX: Lv3 도달)는 100 EXP 전후로 조정
+
+            // ▶ 3. 골드 보상 기준
+            //    - 반복 퀘스트: 골드 없음
+            //    - 일반 퀘스트: 보상 EXP × 10 = 골드
+            //    - 스탯/레벨 조건 퀘스트는 도달 난이도 고려해 300~700G 배정
+
+            // ▶ 4. 무기 보상
+            //    - 보급 무기(EX: 강철검)는 초반 반복 퀘스트나 튜토리얼성 퀘스트에 한해 지급
+            //    - 중급 이상 장비는 중후반 스탯/레벨 조건 퀘스트 보상으로만 지급
+
+            // ※ 보상 수치는 플레이어 성장 흐름(레벨, 장비, 재화) 속도를 고려해 조정함
+
 
             public static void QuestListDB()
             {
@@ -83,9 +105,9 @@ namespace XVIBE_TextRPG
                     Index = 1,
                     QuestName = "마을을 위협하는 몬스터 처치",
                     Description = "이봐! 마을 근처에 몬스터들이 너무 많아졌다고 생각하지 않나? \n마을주민들의 안전을 위해서라도 저것들 수를 좀 줄여야 한다고! \n모험가인 자네가 좀 처치해주게!",
-                    RequiredKillCount = 5, // 아무 몬스터나 5마리 처치하면 퀘스트 클리어
-                    RewardGold = 300,
-                    RewardExp = 200,
+                    RequiredKillCount = 10, // 아무 몬스터나 5마리 처치하면 퀘스트 클리어
+                    RewardGold = 0, // 반복 퀘스트는 보상이 없음
+                    RewardExp = 50,
                     RewardWeapon = Shop.storeWeapons[0], // 강철검을 보상으로 준다
                     RewardWeapon_Count = 1, // 강철검 하나를 보상으로 준다
                     Status = QuestStatus.NotAccepted,
@@ -97,8 +119,8 @@ namespace XVIBE_TextRPG
                     Index = 2,
                     QuestName = "장비를 장착해보자",
                     Description = "세상에.. 자네 아직도 장비 없이 맨손으로 싸우는 건 아니겠지?? \n어서 빨리, 상점에서 장비를 구매해서 장착해보게나 \n모험은 위험하니 철저히 준비하게!",
-                    RewardGold = 150,
-                    RewardExp = 50,
+                    RewardGold = 100,
+                    RewardExp = 30,
                     Status = QuestStatus.NotAccepted, // Equipment.EquippedWeapon != null 요놈 활용하여 장비 장착하면 클리어
                     IsRepeatable = false
                 });
@@ -109,7 +131,7 @@ namespace XVIBE_TextRPG
                     QuestName = "더욱 더 강해지기!",
                     Description = "강한 몬스터를 상대하기 위해서 수련을 게을리 하지 말게! \n상위 장비를 장착하거나 레벨을 올려서 강해지고 오게나 \n건승을 빌겠네...!",
                     Required_TotalAtk = 30, // 장비 장착 포함 플레이어의 공격력이 30이상이면 클리어 가능
-                    RewardGold = 500,
+                    RewardGold = 600,
                     RewardExp = 300,
                     Status = QuestStatus.NotAccepted,
                     IsRepeatable = false
@@ -121,8 +143,8 @@ namespace XVIBE_TextRPG
                     QuestName = "아픈건 싫으니까 방어력에 올인하고자 합니다!",
                     Description = "강한 자는 단순히 때리는 자가 아니라, 맞아도 쓰러지지 않는 자일세! \n상위 장비를 장착하거나 레벨을 올려서 단단해지고 오게나 \n건승을 빌겠네...!",
                     Required_TotalDef = 20, // 장비 장착 포함 플레이어의 방어력이 20이상이면 클리어 가능
-                    RewardGold = 700,
-                    RewardExp = 200,
+                    RewardGold = 500,
+                    RewardExp = 250,
                     Status = QuestStatus.NotAccepted,
                     IsRepeatable = false
                 });
@@ -133,8 +155,8 @@ namespace XVIBE_TextRPG
                     QuestName = "니 렙에 잠이 오냐?",
                     Description = "렙 2짜리가 잠을 자? \n지금 자면 내일도 몬스터한테 맞는다. \n지금 렙업하면, 내일은 자네가 몬스터를 때린다...!!",
                     Required_Level = 3, // 플레이어의 레벨이 3이상이면 클리어 가능
-                    RewardGold = 1000,
-                    RewardExp = 50,
+                    RewardGold = 300,
+                    RewardExp = 100,
                     Status = QuestStatus.NotAccepted,
                     IsRepeatable = false
                 });
