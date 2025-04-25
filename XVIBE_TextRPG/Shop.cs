@@ -5,18 +5,34 @@ namespace XVIBE_TextRPG
 {
     public class Shop
     {
+        // ▒▒▒ [장비 밸런스 기준 정리] ▒▒▒
+        //
+        // ▶ 스탯 구조 기준
+        //    - 레벨업 시 공격력 +1, 방어력 +2
+        //    - 장비 1개 = 3~10레벨 분량 성장치 제공
+        //
+        // ▶ 구매 비용 기준
+        //    - 장비 하나 구매 = 중급 던전 1~2회 보상으로 충당 가능
+        //    - 너무 비싸면 접근 불가, 너무 싸면 성장 압축 과도
+        //
+        // ▶ 난이도 기준
+        //    - 고급 던전 생존 조건 = 방어력 25~30 필요
+        //    - 고급 장비는 반드시 착용해야 클리어 가능하도록 설정
+
         public static List<Equipment.Weapon> storeWeapons = new List<Equipment.Weapon>()
         {
-            new Equipment.Weapon("강철 검", Equipment.WeaponType.Sword, 10, 100),
-            new Equipment.Weapon("은 단검", Equipment.WeaponType.Dagger, 7, 80),
-            new Equipment.Weapon("마법 지팡이", Equipment.WeaponType.Staff, 12, 150),
+            new Equipment.Weapon("나무 검", Equipment.WeaponType.Sword, 3, 100),
+            new Equipment.Weapon("강철 검", Equipment.WeaponType.Sword, 6, 300),
+            new Equipment.Weapon("은 단검", Equipment.WeaponType.Dagger, 10, 600),
+            new Equipment.Weapon("전설의 마법 지팡이", Equipment.WeaponType.Staff, 15, 1000),
         };
 
         public static List<Equipment.Armor> storeArmors = new List<Equipment.Armor>()
         {
-            new Equipment.Armor("판금 갑옷", Equipment.ArmorType.Metal, 6, 100),
-            new Equipment.Armor("가죽 조끼", Equipment.ArmorType.Leather, 4, 80),
-            new Equipment.Armor("마법사의 로브", Equipment.ArmorType.Robe, 2, 150),
+            new Equipment.Armor("가죽 조끼", Equipment.ArmorType.Leather, 3, 120),
+            new Equipment.Armor("판금 갑옷", Equipment.ArmorType.Metal, 7, 400),
+            new Equipment.Armor("마법 로브", Equipment.ArmorType.Leather, 10, 600),
+            new Equipment.Armor("용의 갑옷", Equipment.ArmorType.Robe, 17, 1000),
         };
 
         public static void EnterShop()

@@ -20,7 +20,7 @@ namespace XVIBE_TextRPG
 
         public static int Level { get; set; } = 1; // 플레이어 레벨 = 기본레벨 1 + 경헙치 100당 레벨업
 
-        public static int Gold { get; set; } = 1500; // 플레이어 골드
+        public static int Gold { get; set; } = 600; // 플레이어 골드
 
         public static int MaxHP { get; set; } = 100; // 직업에 따라 결정되도록 수정 필요
         public static int CurrentHP { get; set; } = MaxHP;
@@ -32,6 +32,7 @@ namespace XVIBE_TextRPG
         
 
         public static float AdditionalEvasionRate { get; set; } = 0; // 추가 회피율
+        public static float BaseEvasionRate { get; set; } = 0; // 직업별 기본 회피율
 
 
         // 전투 턴 동안 추가 공격력
@@ -44,21 +45,27 @@ namespace XVIBE_TextRPG
             switch (Job)
             {
                 case "전사":
-                    MaxHP = 100;
+                    MaxHP = 130;
                     TotalATK = 10 + Equipment.ATKBonus + Level;
-                    TotalDEF = 5 + Equipment.DEFBonus + Level / 2;
+                    TotalDEF = 10 + Equipment.DEFBonus + Level / 2;
+                    MaxMP = 20;
+                    BaseEvasionRate = 0.00f;
                     Quest.CheckQuestConditions();
                     break;
                 case "마법사":
-                    MaxHP = 60;
-                    TotalATK = 15 + Equipment.ATKBonus + Level;
+                    MaxHP = 80;
+                    TotalATK = 17 + Equipment.ATKBonus + Level;
                     TotalDEF = 3 + Equipment.DEFBonus + Level / 2;
+                    MaxMP = 80;
+                    BaseEvasionRate = 0.05f;
                     Quest.CheckQuestConditions();
                     break;
                 case "도적":
-                    MaxHP = 80;
-                    TotalATK = 12 + Equipment.ATKBonus + Level;
-                    TotalDEF = 4 + Equipment.DEFBonus + Level / 2;
+                    MaxHP = 100;
+                    TotalATK = 13 + Equipment.ATKBonus + Level;
+                    TotalDEF = 5 + Equipment.DEFBonus + Level / 2;
+                    MaxMP = 40;
+                    BaseEvasionRate = 0.15f;
                     Quest.CheckQuestConditions();
                     break;
                 default:
@@ -406,25 +413,56 @@ namespace XVIBE_TextRPG
         }
 
         // 레벨업
+
+        // ▒▒▒ [레벨업 밸런스 기준 주석] ▒▒▒
+        //
+        // ▶ 성장 구조
+        //    - 레벨업 필요 EXP: 100으로 설정
+        //      → 평균 던전 2~4회, 퀘스트 2~3개 클리어로 1레벨 업 가능
+        //      → 성장이 지체되지 않도록 템포를 맞춘 수치
+        //
+        // ▶ 능력치 상승폭
+        //    - 공격력: +1 / 방어력: +2
+        //      → 고급 던전 평균 몬스터 ATK 30~45 수준을 감안해,
+        //         플레이어가 일정 레벨 이상이면 장비 없이도 최소 생존 가능하도록 설계
+        //
+        // ▶ 밸런스 방향성
+        //    - 장비가 핵심 성장 수단이긴 하지만,
+        //      순수 레벨업만으로도 스탯이 확실히 오르도록 구성해 **성장 보람 체감 보장**
+        //    - 성장 난이도 완화를 통해 유저 이탈 방지
+        //      → 특히 초반 구간에서 빠른 성취감을 주기 위한 조치
+        //
+        // ▶ 연출 및 보조 요소
+        //    - 노란색 출력: 레벨업 알림 강조
+        //    - 초록색 출력: 능력치 변화 강조
+        //    - 퀘스트 조건 재체크 포함 (CheckQuestConditions)
+        //
+        //  전체 밸런스는 "EXP 100 기준 + 능력치 직접 성장 + 장비 구매"의 삼각구조로 설계됨
         public static void LvUp()
         {
             int remainderExp = 0;
 
-            if (Exp >= 10)
+            if (Exp >= 100) // 렙업시 필요 EXP 100으로 변경
             {
-                remainderExp = Exp - 10; // 레벨업 하고 남은 경험치
+                remainderExp = Exp - 100; // 레벨업 하고 남은 경험치
                 Level++;
-                TotalATK += 0.5f;
-                TotalDEF += 1;
+                TotalATK += 1f;
+                TotalDEF += 2;
                 Exp = remainderExp;
 
+                Console.ForegroundColor = ConsoleColor.Yellow;
                 Console.WriteLine("[캐릭터 정보]");
                 Console.WriteLine($"Lv.{Level - 1} {Name} -> Lv.{Level} {Name}");
+                Console.ResetColor();
+
+                Console.ForegroundColor = ConsoleColor.Green;
                 Console.WriteLine($"Hp.{CurrentHP} -> {MaxHP}");
                 Console.WriteLine($"Mp.{CurrentMP} -> {MaxMP}");
                 Console.WriteLine($"공격력: {TotalATK - 0.5f} -> {TotalATK}");
                 Console.WriteLine($"방어력:{TotalDEF - 1} -> {TotalDEF}");
                 Console.WriteLine($"Exp:{Exp + 10} -> {remainderExp}\n");
+                Console.ResetColor();
+
                 Console.WriteLine("아무 키나 눌러주세요.\n");
                 Console.ReadLine();
                 Quest.CheckQuestConditions(); // 퀘스트 필요 공격력, 방어력 달성했는지 체크

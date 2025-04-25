@@ -486,7 +486,7 @@ namespace XVIBE_TextRPG
             for (int i = 0; i < 3; i++) // 3마리 생성
             {
                 int type = random.Next(0, 3); // 0~2 타입 랜덤 생성
-                int level = random.Next(1, 4); // 1~3 레벨 랜덤 생성
+                int level = random.Next(1, 4); 
                 monsterList.Add(new Enemy(type, level));
             }
 
@@ -513,8 +513,8 @@ namespace XVIBE_TextRPG
 
             for (int i = 0; i < 4; i++) // 4마리 생성
             {
-                int type = random.Next(1, 4); // 1~3 타입 랜덤 생성
-                int level = random.Next(2, 5); // 2~4 레벨 랜덤 생성
+                int type = random.Next(1, 4);
+                int level = random.Next(3, 6); 
                 monsterList.Add(new Enemy(type, level));
             }
 
@@ -523,7 +523,7 @@ namespace XVIBE_TextRPG
 
         protected override int GetGoldReward() // override로 중급 던전 골드 보상 재정의
         {
-            return 1000; // 1000G
+            return 390; // 390G 골드 보상 공식은 Exp * 15G
         }
 
         public NormalDeonseon() // 출력 메시지와 상속받은 던전 입장 메서드 실행
@@ -544,10 +544,10 @@ namespace XVIBE_TextRPG
             var random = new Random();
             var monsterList = new List<Enemy>();
 
-            for (int i = 0; i < 4; i++) // 4마리 생성
+            for (int i = 0; i < 5; i++) 
             {
-                int type = random.Next(2, 5); // 2~4 타입 랜덤 생성
-                int level = random.Next(1, 4); // 1~3 레벨 랜덤 생성
+                int type = random.Next(2, 5); 
+                int level = random.Next(4, 7); 
                 monsterList.Add(new Enemy(type, level));
             }
 
@@ -556,7 +556,7 @@ namespace XVIBE_TextRPG
 
         protected override int GetGoldReward() // override로 고급 던전 골드 보상 재정의
         {
-            return 2000; // 2000G
+            return 645; // 645G 골드 보상 공식은 Exp * 15G
         }
 
         public HardDeonseon() // 출력 메시지와 상속받은 던전 입장 메서드 실행
