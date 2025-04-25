@@ -387,7 +387,7 @@ namespace XVIBE_TextRPG
         // 전투 패배 메서드
         public void BattleDefeat()
         {
-            Thread.Sleep(1000);
+            Thread.Sleep(500);
             Console.Clear();
             Console.ForegroundColor = ConsoleColor.Red;
             Console.WriteLine(@"
@@ -407,6 +407,7 @@ namespace XVIBE_TextRPG
             Console.WriteLine("Enter 키를 눌러 계속하세요.");
             Console.ReadLine();
             Player.ResetAfterDeath();
+            MainMenu.ShowMainMenu();
         }
 
         // 경험치 획득 메서드

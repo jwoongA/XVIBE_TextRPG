@@ -37,12 +37,22 @@ namespace XVIBE_TextRPG
         public List<QuestData> Quests { get; set; } = new List<QuestData>();
         public int CurrentKillCount { get; set; }
 
+        public List<ConsumableData> Consumables { get; set; } = new List<ConsumableData>();
         public class QuestData
         {
             public string Name { get; set; }
             public bool IsAccepted { get; set; }
             public bool IsCompleted { get; set; }
             public bool IsRewardReceived { get; set; }
+        }
+
+        public class ConsumableData
+        {
+            public string Name { get; set; }
+            public int HealHP { get; set; }
+            public int HealMP { get; set; }
+            public int Amount { get; set; }
+            public string Type { get; set; }
         }
     }
 
