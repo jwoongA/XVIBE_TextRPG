@@ -323,6 +323,7 @@ namespace XVIBE_TextRPG
             GetRewards(); // 클리어 보상 호출
             Console.WriteLine($"보상으로 {GetGoldReward()} G를 획득했습니다.");
             Console.WriteLine($"총 경험치 {totalExpGained}를 획득했습니다.");
+            Quest.CheckQuestConditions();
             Player.SavePlayerData();
             Console.WriteLine();
             Console.WriteLine("Enter 키를 눌러주세요.");

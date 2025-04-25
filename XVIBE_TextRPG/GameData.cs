@@ -33,6 +33,17 @@ namespace XVIBE_TextRPG
 
         public List<ArmorData> ArmorInventory { get; set; } = new List<ArmorData>();
         public ArmorData EquippedArmor { get; set; }
+
+        public List<QuestData> Quests { get; set; } = new List<QuestData>();
+        public int CurrentKillCount { get; set; }
+
+        public class QuestData
+        {
+            public string Name { get; set; }
+            public bool IsAccepted { get; set; }
+            public bool IsCompleted { get; set; }
+            public bool IsRewardReceived { get; set; }
+        }
     }
 
     public class WeaponData

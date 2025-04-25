@@ -132,7 +132,7 @@ namespace XVIBE_TextRPG
             Console.WriteLine($"{armor.Name}을(를) 새로 장착했습니다!");
         }
 
-        // 무기 해제
+        // 장비 해제
         public static void UnequipAll()
         {
             bool unequipped = false;
