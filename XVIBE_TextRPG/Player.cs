@@ -432,41 +432,32 @@ namespace XVIBE_TextRPG
         //    - 성장 난이도 완화를 통해 유저 이탈 방지
         //      → 특히 초반 구간에서 빠른 성취감을 주기 위한 조치
         //
-        // ▶ 연출 및 보조 요소
-        //    - 노란색 출력: 레벨업 알림 강조
-        //    - 초록색 출력: 능력치 변화 강조
-        //    - 퀘스트 조건 재체크 포함 (CheckQuestConditions)
-        //
         //  전체 밸런스는 "EXP 100 기준 + 능력치 직접 성장 + 장비 구매"의 삼각구조로 설계됨
         public static void LvUp()
         {
-            int remainderExp = 0;
-
-            if (Exp >= 100) // 렙업시 필요 EXP 100으로 변경
+            while (Exp >= 100)
             {
-                remainderExp = Exp - 100; // 레벨업 하고 남은 경험치
+                int remainderExp = Exp - 100;
                 Level++;
+                MaxHP += 2;
                 TotalATK += 1;
                 TotalDEF += 2;
                 Exp = remainderExp;
 
                 Console.ForegroundColor = ConsoleColor.Yellow;
-                Console.WriteLine("[캐릭터 정보]");
-                Console.WriteLine($"Lv.{Level - 1} {Name} -> Lv.{Level} {Name}");
+                Console.WriteLine($"[캐릭터 정보] Lv.{Level - 1} -> Lv.{Level}");
                 Console.ResetColor();
 
                 Console.ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine($"Hp.{CurrentHP} -> {MaxHP}");
-                Console.WriteLine($"Mp.{CurrentMP} -> {MaxMP}");
+                Console.WriteLine($"최대 체력: {MaxHP - 2} -> {MaxHP}");
                 Console.WriteLine($"공격력: {TotalATK - 1} -> {TotalATK}");
-                Console.WriteLine($"방어력:{TotalDEF - 2} -> {TotalDEF}");
-                Console.WriteLine($"Exp:{Exp + 100} -> {remainderExp}\n");
+                Console.WriteLine($"방어력: {TotalDEF - 2} -> {TotalDEF}");
+                Console.WriteLine($"Exp: {Exp + 100} -> {remainderExp}\n");
                 Console.ResetColor();
-
-                Console.WriteLine("아무 키나 눌러주세요.\n");
-                Console.ReadLine();
-                Quest.CheckQuestConditions(); // 퀘스트 필요 공격력, 방어력 달성했는지 체크
             }
+            Quest.CheckQuestConditions(); // 퀘스트 조건 즉시 확인
+            Console.WriteLine("아무 키나 누르세요...");
+            Console.ReadLine();
         }
     }
 }

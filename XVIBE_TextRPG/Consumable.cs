@@ -45,17 +45,6 @@ namespace XVIBE_TextRPG
             new Consumable("복합 포션(대)", 1400, 200, 200, 1, ConsumableType.Potion, "체력과 마나를 각각 200 회복합니다."),
 
             new Consumable("섬광탄", 400, 0, 0, 3, ConsumableType.FlashGrenade, "섬광탄을 사용하여 회피율을 30% 증가시킵니다.(3턴 지속, 중첩 안됨)"),
-
-            //new Consumable("체력 포션(소)", 500, 50, 0, 5, ConsumableType.Potion, "체력을 50 회복합니다."),
-            //new Consumable("마나 포션(소)", 500, 0, 50, 5, ConsumableType.Potion, "마나를 50 회복합니다."),
-            //new Consumable("체력 포션(중)", 2000, 150, 0, 0, ConsumableType.Potion, "체력을 150 회복합니다."),
-            //new Consumable("마나 포션(중)", 2000, 0, 150, 0, ConsumableType.Potion, "마나를 150 회복합니다."),
-            //new Consumable("체력 포션(대)", 5000, 300, 0, 0, ConsumableType.Potion, "체력을 300 회복합니다."),
-            //new Consumable("마나 포션(대)", 5000, 0, 300, 0, ConsumableType.Potion, "마나를 300 회복합니다."),
-            //new Consumable("복합 포션(소)", 1000, 50, 50, 0, ConsumableType.Potion, "체력과 마나를 각각 50 회복합니다."),
-            //new Consumable("복합 포션(중)", 3000, 150, 150, 0, ConsumableType.Potion, "체력과 마나를 각각 150 회복합니다."),
-            //new Consumable("복합 포션(대)", 7000, 300, 300, 0, ConsumableType.Potion, "체력과 마나를 각각 300 회복합니다."),
-            //new Consumable("섬광탄", 1500, 0, 0, 5, ConsumableType.FlashGrenade, "섬광탄을 사용하여 회피율을 30% 증가시킵니다.(중첩 안됨)"),
         };
 
         static public void UseConsumable()
