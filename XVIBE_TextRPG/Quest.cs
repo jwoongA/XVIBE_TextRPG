@@ -163,10 +163,25 @@ namespace XVIBE_TextRPG
                         QuestStatus.Finished => "완료"
                     };
 
+                    ConsoleColor statusColor = quest.Status switch
+                    {
+                        QuestStatus.NotAccepted => ConsoleColor.Gray,
+                        QuestStatus.InProgress => ConsoleColor.Cyan,
+                        QuestStatus.Completed => ConsoleColor.Yellow,
+                        QuestStatus.Finished => ConsoleColor.Green,
+                        _ => ConsoleColor.White
+                    };
+
                     string Reapeatable_Quest = quest.IsRepeatable ? "[반복]" : "[----]";
 
-                    Console.WriteLine($" {quest.Index}. [{statusText}] {Reapeatable_Quest} {quest.QuestName}");
+                    Console.Write($" {quest.Index}.");
+                    Console.ForegroundColor = statusColor;
+                    Console.Write($" [{statusText}]");
+                    Console.ResetColor();
+
+                    Console.WriteLine($" {Reapeatable_Quest} {quest.QuestName}");
                 }
+
                 Console.WriteLine("\n※ 번호를 입력하면 상세 정보를 확인할 수 있습니다.");
                 Console.WriteLine("※ 0을 입력하면 목록에서 나갑니다.");
                 Console.WriteLine("※ 퀘스트 정보를 갱신하려면 메인 메뉴로 나갔다가 다시 들어오세요.");
