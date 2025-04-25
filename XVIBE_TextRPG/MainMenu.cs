@@ -13,6 +13,8 @@ namespace XVIBE_TextRPG
         {
             while (true)
             {
+                Quest.CheckQuestConditions(); // 퀘스트 상태 메인 메뉴에서 계속 최신화
+
                 Console.Clear();
                 Console.WriteLine();
                 Console.WriteLine("스파르타 마을에 오신 여러분 환영합니다.");
