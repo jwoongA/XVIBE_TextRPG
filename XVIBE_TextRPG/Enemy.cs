@@ -95,8 +95,8 @@ namespace XVIBE_TextRPG
 
                 if (isPlayer)
                 {
-                    // 플레이어의 회피율: 기본 회피율 + 직업별 회피율 + 추가 회피율
-                    evasionChance = (0.10f + Player.BaseEvasionRate + Player.AdditionalEvasionRate);
+                    // 플레이어의 회피율: 기본 회피율 + 추가 회피율
+                    evasionChance = (0.10f + Player.AdditionalEvasionRate);
                 }
                 else
                 {

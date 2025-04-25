@@ -26,7 +26,7 @@ namespace XVIBE_TextRPG
         public int MaxMP { get; set; }
         public int CurrentMP { get; set; }
         public int TotalATK { get; set; }
-        public int TotalDEF { get; set; }        
+        public float TotalDEF { get; set; }        
 
         public List<WeaponData> Inventory { get; set; } = new List<WeaponData>();        
         public WeaponData EquippedWeapon { get; set; }
