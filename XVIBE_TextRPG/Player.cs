@@ -245,6 +245,15 @@ namespace XVIBE_TextRPG
                     
                 }).ToList(),
 
+                Consumables = Consumable.consumable.Select(c => new ConsumableData
+                {
+                    Name = c.Name,
+                    HealHP = c.HealHP,
+                    HealMP = c.HealMP,
+                    Amount = c.Amount,
+                    Type = c.Type.ToString()
+                }).ToList(),
+
                 CurrentKillCount = Quest.CurrentKillCount,
             };
 
@@ -262,6 +271,7 @@ namespace XVIBE_TextRPG
         // data 에 있는 정보 플레이어에게 전달
         public static void LoadPlayerData(GameData data)
         {
+            // 플레이어 캐릭터 스텟 관련
             Name = data.Name;
             Job = data.Job;
             Exp = data.Exp;
@@ -274,6 +284,7 @@ namespace XVIBE_TextRPG
             TotalATK = data.TotalATK;
             TotalDEF = data.TotalDEF;
 
+            // 플레이어 무기 관련
             Equipment.Inventory = data.Inventory.Select(w => new Equipment.Weapon(
                 w.Name,
                 Enum.Parse<Equipment.WeaponType>(w.Type),
@@ -281,6 +292,7 @@ namespace XVIBE_TextRPG
                 w.Price
                 )).ToList();
 
+            // 플레이어 무기 작착 관련
             if (data.EquippedWeapon != null)
             {
                 var loadedWeapon = new Equipment.Weapon(
@@ -298,6 +310,7 @@ namespace XVIBE_TextRPG
                 Equipment.ATKBonus = 0;
             }
 
+            // 플레이어 방어구 관련
             Equipment.ArmorInventory = data.ArmorInventory.Select(a => new Equipment.Armor(
                 a.Name,
                 Enum.Parse<Equipment.ArmorType>(a.Type),
@@ -305,6 +318,7 @@ namespace XVIBE_TextRPG
                 a.Price
             )).ToList();
 
+            // 플레이어 방어구 장착 관련
             if (data.EquippedArmor != null)
             {
                 var loadedArmor = new Equipment.Armor(
@@ -322,6 +336,22 @@ namespace XVIBE_TextRPG
                 Equipment.DEFBonus = 0;
             }
 
+            // 플레이어 포션 관련
+            foreach (var c in data.Consumables)
+            {
+                var existing = Consumable.consumable.FirstOrDefault(x =>
+                    x.Name == c.Name &&
+                    x.HealHP == c.HealHP &&
+                    x.HealMP == c.HealMP &&
+                    x.Type.ToString() == c.Type);
+
+                if (existing != null)
+                {
+                    existing.Amount = c.Amount;
+                }
+            }
+
+            // 플레이어 퀘스트 관련
             if (data.Quests != null && data.Quests.Count > 0)
             {
                 foreach (var q in data.Quests)
@@ -346,26 +376,40 @@ namespace XVIBE_TextRPG
 
         public static void ResetAfterDeath()
         {
-            //레벨, 경험치, 골드 초기화
+            // 레벨, 경험치, 골드 초기화
             Level = 1;
             Exp = 0;
             Gold = 1500;
 
-            //무기, 인벤토리 초기화
+            // 장비 인벤토리 초기화
             Equipment.Inventory.Clear();
             Equipment.EquippedWeapon = null;
             Equipment.ATKBonus = 0;
             Equipment.ArmorInventory.Clear();
             Equipment.EquippedArmor = null;
             Equipment.DEFBonus = 0;
+
+            // 포션 갯수 초기화
+            foreach (var c in Consumable.consumable)
+            {
+                c.Amount = 0;
+            }
+
+            // 퀘스트 초기화
+            foreach (var quest in Quest.questList)
+            {
+                quest.Status = QuestStatus.NotAccepted;
+            }
+            Quest.CurrentKillCount = 0;
+
             Player.EndTurn(); // 전투 종료 시 추가 능력치 초기화
 
-            //직업에 따른 능력치 초기화
+            // 직업에 따른 능력치 초기화
             UpdateStats();
 
             // 체력, 마나는 최대치로 회복
             CurrentHP = MaxHP;
-            CurrentMP = MaxMP;
+            CurrentMP = MaxMP;            
         }
 
         // 레벨업
