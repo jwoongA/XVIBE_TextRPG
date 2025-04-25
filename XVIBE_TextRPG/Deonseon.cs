@@ -18,6 +18,7 @@ namespace XVIBE_TextRPG
         protected List<Enemy> monsters; // 몬스터 리스트
         protected List<string> battleLog; // 배틀 로그 리스트
         protected List<Reward> rewards = new List<Reward>(); // 던전 클리어 보상 리스트
+        private int expBeforeBattle; // 전투 시작 시 경험치 저장
 
         public Deonseon() // 생성자에서 보상 설정
         {
@@ -58,6 +59,53 @@ namespace XVIBE_TextRPG
         // 던전 시작 메서드
         public void StartDungeon()
         {
+            while (true)
+            {
+                // 콘솔 클리어 후 플레이어 상태 출력
+                Console.Clear();
+                DisplayPlayerStatus();
+
+                // 몬스터 상태 출력
+                DisplayMonsters();
+                Console.WriteLine("===== 행동 선택 =====");
+                Console.WriteLine("1. 공격하기");
+                Console.WriteLine("2. 소모품 사용");
+                Console.WriteLine("0. 후퇴");
+                Console.Write(">> ");
+                string input = Console.ReadLine();
+
+                switch (input)
+                {
+                    case "1": // 공격하기
+                        TargetEnemy(); // 기존의 StartDungeon 메서드 호출
+                        break;
+                    case "2": // 소모품 사용
+                              // 콘솔 클리어 후 플레이어 상태 출력
+                        Console.Clear();
+                        DisplayPlayerStatus();
+
+                        // 몬스터 상태 출력
+                        DisplayMonsters();
+                        Consumable.UseConsumable();
+                        break;
+                    case "0": // 후퇴
+                        Console.WriteLine("던전에서 후퇴합니다.");
+                        Player.EndTurn(); // 전투 종료 시 초기화
+                        return; // 메서드 종료
+                    default:
+                        Console.WriteLine("잘못된 입력입니다. 다시 선택해주세요.");
+                        break;
+                }
+
+                Console.WriteLine("\nEnter를 눌러 계속...");
+                Console.ReadLine();
+            }
+        }
+        public void TargetEnemy()
+        {
+            // 전투 시작 직전 경험치 저장
+            expBeforeBattle = Player.Exp;
+
             if (monsters == null || monsters.Count == 0)
             {
                 Console.WriteLine("에러: 몬스터가 생성되지 않았습니다.");
@@ -74,13 +122,12 @@ namespace XVIBE_TextRPG
                 DisplayMonsters();
 
                 // 공격 대상 선택
-                Console.WriteLine("공격할 몬스터를 선택하세요 (1-4). 0을 누르면 던전에서 후퇴합니다.");
+                Console.WriteLine("공격할 몬스터를 선택하세요 (1-4). 0을 누르면 행동 선택으로 되돌아갑니다.");
                 Console.Write(">> ");
                 string targetInput = Console.ReadLine();
                 if (targetInput == "0")
                 {
-                    Console.WriteLine("던전에서 후퇴합니다.");
-                    Player.EndTurn(); // 전투 종료 시 공격력 버프 초기화
+                    Console.WriteLine("행동 선택으로 되돌아갑니다.");
                     break;
                 }
 
@@ -164,16 +211,16 @@ namespace XVIBE_TextRPG
         }
 
         // 플레이어 상태 출력
-        private void DisplayPlayerStatus()
+        public void DisplayPlayerStatus()
         {
             Console.WriteLine($"플레이어 상태: HP: {Player.CurrentHP}/{Player.MaxHP}, MP: {Player.CurrentMP}/{Player.MaxMP}");
             Console.WriteLine($"직업: {Player.Job}, 레벨: {Player.Level}, 경험치: {Player.Exp}");
-            Console.WriteLine($"공격력: {Player.GetCurrentATK()}, 방어력: {Player.TotalDEF}");
+            Console.WriteLine($"공격력: {Player.GetCurrentATK()}, 방어력: {Player.TotalDEF}, 추가 회피율: {Player.AdditionalEvasionRate*100}%");
             Console.WriteLine(new string('-', 40)); // 구분선
         }
 
         // 몬스터 상태 출력
-        private void DisplayMonsters()
+        public void DisplayMonsters()
         {
             Console.WriteLine("현재 몬스터 상태:");
             for (int i = 0; i < monsters.Count; i++)
@@ -194,7 +241,7 @@ namespace XVIBE_TextRPG
                 Console.WriteLine($"{target.Name}은(는) 이미 쓰러졌습니다.");
                 return;
             }
-            else if (Combat.IsMiss())
+            else if (Combat.IsMiss(false)) // 몬스터를 공격할 때
             {
                 battleLog.Add($"{target.Name}을(를) 공격했지만 아무일도 일어나지 않았습니다....");
             }
@@ -302,6 +349,7 @@ namespace XVIBE_TextRPG
             Console.ReadLine();
         }
 
+
         // 전투 시작 시 경험치 저장
         private int totalExpGained = 0;
 
@@ -328,7 +376,11 @@ namespace XVIBE_TextRPG
             Player.SavePlayerData();
             Console.WriteLine();
             Console.WriteLine("Enter 키를 눌러주세요.");
+
             Console.ReadLine();
+
+            // 메인 메뉴로 이동
+            MainMenu.ShowMainMenu();
         }
 
         // 전투 패배 메서드
