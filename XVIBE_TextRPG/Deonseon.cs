@@ -77,7 +77,9 @@ namespace XVIBE_TextRPG
                 switch (input)
                 {
                     case "1": // 공격하기
-                        TargetEnemy(); // 기존의 StartDungeon 메서드 호출
+                        bool endBattle = TargetEnemy(); // 기존의 StartDungeon 메서드 호출
+                        if (endBattle)
+                            return;
                         break;
                     case "2": // 소모품 사용
                               // 콘솔 클리어 후 플레이어 상태 출력
@@ -101,7 +103,7 @@ namespace XVIBE_TextRPG
                 Console.ReadLine();
             }
         }
-        public void TargetEnemy()
+        public bool TargetEnemy()
         {
             // 전투 시작 직전 경험치 저장
             expBeforeBattle = Player.Exp;
@@ -109,7 +111,7 @@ namespace XVIBE_TextRPG
             if (monsters == null || monsters.Count == 0)
             {
                 Console.WriteLine("에러: 몬스터가 생성되지 않았습니다.");
-                return;
+                return false;
             }
 
             while (true)
@@ -194,20 +196,21 @@ namespace XVIBE_TextRPG
                     Console.WriteLine("플레이어와 몬스터가 동시에 쓰러졌습니다. 플레이어의 승리로 간주됩니다!");
                     BattleVictory();
                     Player.EndTurn(); // 전투 종료 시 공격력 초기화
-                    break;
+                    return true;                    
                 }
                 else if (Player.CurrentHP <= 0)
                 {
                     BattleDefeat();
                     Player.EndTurn(); // 전투 종료 시 공격력 초기화
-                    break;
+                    return true;
                 }
                 else if (monsters.TrueForAll(m => m.IsDead()))
                 {
                     BattleVictory();
-                    break;
+                    return true;
                 }
             }
+            return false;
         }
 
         // 플레이어 상태 출력
@@ -377,11 +380,7 @@ namespace XVIBE_TextRPG
             Player.SavePlayerData();
             Console.WriteLine();
             Console.WriteLine("Enter 키를 눌러주세요.");
-
             Console.ReadLine();
-
-            // 메인 메뉴로 이동
-            MainMenu.ShowMainMenu();
         }
 
         // 전투 패배 메서드
@@ -407,7 +406,6 @@ namespace XVIBE_TextRPG
             Console.WriteLine("Enter 키를 눌러 계속하세요.");
             Console.ReadLine();
             Player.ResetAfterDeath();
-            MainMenu.ShowMainMenu();
         }
 
         // 경험치 획득 메서드
