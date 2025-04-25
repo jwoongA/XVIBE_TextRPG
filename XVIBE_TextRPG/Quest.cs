@@ -169,6 +169,7 @@ namespace XVIBE_TextRPG
                 }
                 Console.WriteLine("\n※ 번호를 입력하면 상세 정보를 확인할 수 있습니다.");
                 Console.WriteLine("※ 0을 입력하면 목록에서 나갑니다.");
+                Console.WriteLine("※ 퀘스트 정보를 갱신하려면 메인 메뉴로 나갔다가 다시 들어오세요.");
                 Console.Write(">> ");
 
                 string input = Console.ReadLine();
@@ -296,7 +297,6 @@ namespace XVIBE_TextRPG
                 }
                 else
                 {
-                    quest.Status = QuestStatus.Finished;
                     Console.WriteLine("\n이 퀘스트는 완료되었습니다. 다른 퀘스트를 선택하세요!");
                 }
             }
@@ -358,10 +358,21 @@ namespace XVIBE_TextRPG
                     Console.WriteLine($"+ {quest.RewardWeapon.Name} ×{quest.RewardWeapon_Count} 획득!");
                 }
                 Console.ResetColor();
+
+                if (quest.IsRepeatable)
+                {
+                    Quest.CurrentKillCount = 0; // 반복 퀘스트라면 초기화 후 다시 진행 가능
+                    quest.Status = QuestStatus.NotAccepted;
+                }
+                else
+                {
+                    quest.Status = QuestStatus.Finished;
+                }
             }
             else
             {
                 Console.WriteLine("\n퀘스트 보상 수락을 취소하였습니다.");
+                Console.WriteLine("※ 보상은 퀘스트 상세 보기에서 다시 수령할 수 있습니다.");
                 Console.WriteLine("\n계속하려면 Enter를 누르세요...");
                 Console.ReadLine();
             }
