@@ -70,7 +70,7 @@ namespace XVIBE_TextRPG
 
             public override string ToString()
             {
-                return $"{Name} (방어력: {DEF}, 가격: {Price})";
+                return $"{Name} (방어력: {DEF}, 가격: {Price}G)";
             }
 
             public override bool Equals(object? obj)
