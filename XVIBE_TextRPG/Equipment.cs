@@ -70,7 +70,7 @@ namespace XVIBE_TextRPG
 
             public override string ToString()
             {
-                return $"{Name} (방어력: {DEF}, 가격: {Price})";
+                return $"{Name} (방어력: {DEF}, 가격: {Price}G)";
             }
 
             public override bool Equals(object? obj)
@@ -199,7 +199,7 @@ namespace XVIBE_TextRPG
                     }
                 }
                 Console.WriteLine("\n0. 뒤로가기");
-                Console.WriteLine("장착할 무기 번호를 입력하거나 해제하려면 U를 입력하세요.");
+                Console.WriteLine("장착할 장비 번호를 입력하거나 해제하려면 U를 입력하세요.");
                 Console.Write(">> ");
                 var input = Console.ReadLine();
 
@@ -223,6 +223,8 @@ namespace XVIBE_TextRPG
                         Console.WriteLine("잘못된 입력입니다.");
                     }
                 }
+
+
 
                 Console.WriteLine("\n계속하려면 Enter...");
                 Console.ReadLine();

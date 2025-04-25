@@ -439,7 +439,7 @@ namespace XVIBE_TextRPG
         {
             Random rand = new Random();
 
-            //인벤토리에 없는 아이템 리스트
+            //인벤토리에 없는 아이템 리스트 - 상점의 모든 아이템 중에서, 플레이어의 인벤토리에 아직 없는 아이템 목록
             List<Equipment.Weapon> NoWeapon = Shop.storeWeapons.Where(weapon => !Equipment.Inventory.Any(owned => owned.Name == weapon.Name)).ToList();
             List<Equipment.Armor> NoArmor = Shop.storeArmors.Where(armor => !Equipment.ArmorInventory.Any(owned => owned.Name == armor.Name)).ToList();
 
