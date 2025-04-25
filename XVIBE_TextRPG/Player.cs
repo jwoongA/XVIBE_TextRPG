@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using static XVIBE_TextRPG.Enemy;
+using static XVIBE_TextRPG.GameData;
 
 namespace XVIBE_TextRPG
 {
@@ -227,6 +228,17 @@ namespace XVIBE_TextRPG
                     DEF = Equipment.EquippedArmor.DEF,
                     Price = Equipment.EquippedArmor.Price
                 } : null,
+
+                Quests = Quest.questList.Select(q => new GameData.QuestData
+                {
+                    Name = q.QuestName,
+                    IsAccepted = q.Status == QuestStatus.InProgress,
+                    IsCompleted = q.Status == QuestStatus.Completed,
+                    IsRewardReceived = q.Status == QuestStatus.Finished
+                    
+                }).ToList(),
+
+                CurrentKillCount = Quest.CurrentKillCount,
             };
 
             SaveSystem.Save(data);
@@ -303,7 +315,26 @@ namespace XVIBE_TextRPG
                 Equipment.DEFBonus = 0;
             }
 
-                UpdateStats();
+            if (data.Quests != null && data.Quests.Count > 0)
+            {
+                foreach (var q in data.Quests)
+                {
+                    var quest = Quest.questList.FirstOrDefault(x => x.QuestName == q.Name);
+                    if (quest != null)
+                    {
+                        if (q.IsRewardReceived)
+                            quest.Status = QuestStatus.Finished;
+                        else if (q.IsCompleted)
+                            quest.Status = QuestStatus.Completed;
+                        else if (q.IsAccepted)
+                            quest.Status = QuestStatus.InProgress;
+                        else
+                            quest.Status = QuestStatus.NotAccepted;
+                    }
+                }
+                Quest.CurrentKillCount = data.CurrentKillCount;
+            }
+            UpdateStats();
         }
 
         public static void ResetAfterDeath()
