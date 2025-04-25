@@ -402,7 +402,7 @@ namespace XVIBE_TextRPG
 
             // 체력, 마나는 최대치로 회복
             CurrentHP = MaxHP;
-            CurrentMP = MaxMP;            
+            CurrentMP = MaxMP;
         }
 
         // 레벨업
