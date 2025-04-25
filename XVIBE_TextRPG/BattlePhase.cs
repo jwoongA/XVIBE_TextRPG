@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -29,6 +29,7 @@ namespace XVIBE_TextRPG
                         Console.ReadLine(); // 멈춰줌
                         return;
                     }
+                    Player.UpdateStats();
                     Console.WriteLine("던전 입장 중...");
                     System.Threading.Thread.Sleep(2000); // 2초 대기
                     EasyDeonseon dungeon = new EasyDeonseon(); 
@@ -43,6 +44,7 @@ namespace XVIBE_TextRPG
                         Console.ReadLine(); // 멈춰줌
                         return;
                     }
+                    Player.UpdateStats();
                     Console.WriteLine("던전 입장 중...");
                     System.Threading.Thread.Sleep(2000); // 2초 대기
                     NormalDeonseon normalDungeon = new NormalDeonseon();
@@ -57,6 +59,7 @@ namespace XVIBE_TextRPG
                         Console.ReadLine(); // 멈춰줌
                         return;
                     }
+                    Player.UpdateStats();
                     Console.WriteLine("던전 입장 중...");
                     System.Threading.Thread.Sleep(2000); // 2초 대기
                     HardDeonseon hardDungeon = new HardDeonseon();

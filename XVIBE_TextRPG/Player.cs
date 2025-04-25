@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel.Design;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -20,12 +21,14 @@ namespace XVIBE_TextRPG
 
         public static int Gold { get; set; } = 1500; // 플레이어 골드
 
-        public static int MaxHP { get; set; } = 100; 
+        public static int MaxHP { get; set; } = 100; // 직업에 따라 결정되도록 수정 필요
         public static int CurrentHP { get; set; } = MaxHP;
-        public static int MaxMP { get; set; } = 50; 
+        public static int MaxMP { get; set; } = 50; // 직업에 따라 결정되도록 수정 필요
         public static int CurrentMP { get; set; } = MaxMP;
-        public static int TotalATK { get; set; } = 10; 
-        public static int TotalDEF { get; set; } = 5; 
+
+        public static float TotalATK { get; set; } = 10; // 장비와 레벨에 따라 결정되도록 수정 필요
+        public static int TotalDEF { get; set; } = 5; // 장비와 레벨에 따라 결정되도록 수정 필요
+        
 
         public static float AdditionalEvasionRate { get; set; } = 0; // 추가 회피율
 
@@ -85,7 +88,7 @@ namespace XVIBE_TextRPG
         }
 
         // 현재 공격력 계산 메서드
-        public static int GetCurrentATK()
+        public static float GetCurrentATK()
         {
             return TotalATK + TemporaryATKBoost;
         }
@@ -116,7 +119,7 @@ namespace XVIBE_TextRPG
                     target.TakeDamage(damage);
                     Console.WriteLine($"도적의 스킬을 사용했습니다! {target.Name}에게 {damage}의 피해를 입혔습니다.");
                     Console.WriteLine($"남은 MP: {CurrentMP}");
-                }                   
+                }
             }
             else
             {
@@ -134,7 +137,7 @@ namespace XVIBE_TextRPG
                 {
                     foreach (var target in targets)
                     {
-                        int criticalDamage = target.TakeCriticalDamage(TotalATK); // 마법사 스킬로 모든 적에게 강려크한 크리티컬 데미지 입힘
+                        int criticalDamage = target.TakeCriticalDamage((int)TotalATK); // 마법사 스킬로 모든 적에게 강려크한 크리티컬 데미지 입힘
                         Console.WriteLine($"마법사의 스킬을 사용했습니다! {target.Name}에게 {criticalDamage}의 [치명타]피해를 입혔습니다!!!");
                     }
                 }
@@ -142,10 +145,10 @@ namespace XVIBE_TextRPG
                 {
                     foreach (var target in targets)
                     {
-                        target.TakeDamage(TotalATK);
+                        target.TakeDamage((int)TotalATK);
                         Console.WriteLine($"마법사의 스킬을 사용했습니다! {target.Name}에게 {TotalATK}의 피해를 입혔습니다.");
                     }
-                }             
+                }
                 Console.WriteLine($"남은 MP: {CurrentMP}");
             }
             else
@@ -162,8 +165,8 @@ namespace XVIBE_TextRPG
             Console.WriteLine($"레벨     : {Level}");
             Console.WriteLine($"경험치   : {Exp}");
             Console.WriteLine($"체력     : {CurrentHP} / {MaxHP}");
-            Console.WriteLine($"공격력   : {TotalATK} (+{Equipment.ATKBonus+Level})");
-            Console.WriteLine($"방어력   : {TotalDEF} (+{Equipment.DEFBonus+Level/2})");
+            Console.WriteLine($"공격력   : {TotalATK} (+{Equipment.ATKBonus + Level})");
+            Console.WriteLine($"방어력   : {TotalDEF} (+{Equipment.DEFBonus + Level / 2})");
             Console.WriteLine($"보유 골드: {Gold} G");
             Console.WriteLine("\nEnter 키를 누르면 이전 화면으로 돌아갑니다.");
             Console.ReadLine();
@@ -183,9 +186,10 @@ namespace XVIBE_TextRPG
                 CurrentHP = Player.CurrentHP,
                 MaxMP = Player.MaxMP,
                 CurrentMP = Player.CurrentMP,
-                TotalATK = Player.TotalATK,
+                TotalATK = (int)Player.TotalATK,
                 TotalDEF = Player.TotalDEF,
 
+                //무기 인벤토리
                 Inventory = Equipment.Inventory.Select(w => new WeaponData
                 {
                     Name = w.Name,
@@ -195,13 +199,31 @@ namespace XVIBE_TextRPG
                 }).ToList(),
 
                 // 장착한 물건이 있다면 WeponData에 저장, 없으면 null값
-                EquippedWeapon = Equipment.EquippedWeapon != null ? new WeaponData 
+                EquippedWeapon = Equipment.EquippedWeapon != null ? new WeaponData
                 {
                     Name = Equipment.EquippedWeapon.Name,
                     Type = Equipment.EquippedWeapon.Type.ToString(),
                     ATK = Equipment.EquippedWeapon.ATK,
                     Price = Equipment.EquippedWeapon.Price
-                } : null
+                } : null,
+
+                // 방어구 인벤토리
+                ArmorInventory = Equipment.ArmorInventory.Select(a => new ArmorData
+                {
+                    Name = a.Name,
+                    Type = a.Type.ToString(),
+                    DEF = a.DEF,
+                    Price = a.Price
+                }).ToList(),
+
+                // 방어구도 똑같은 방식으로 저장
+                EquippedArmor = Equipment.EquippedArmor != null ? new ArmorData
+                {
+                    Name = Equipment.EquippedArmor.Name,
+                    Type = Equipment.EquippedArmor.Type.ToString(),
+                    DEF = Equipment.EquippedArmor.DEF,
+                    Price = Equipment.EquippedArmor.Price
+                } : null,
             };
 
             SaveSystem.Save(data);
@@ -235,7 +257,7 @@ namespace XVIBE_TextRPG
                 Enum.Parse<Equipment.WeaponType>(w.Type),
                 w.ATK,
                 w.Price
-                ) ).ToList();
+                )).ToList();
 
             if (data.EquippedWeapon != null)
             {
@@ -244,7 +266,7 @@ namespace XVIBE_TextRPG
                     Enum.Parse<Equipment.WeaponType>(data.EquippedWeapon.Type),
                     data.EquippedWeapon.ATK,
                     data.EquippedWeapon.Price
-                    );
+                );
 
                 Equipment.Equip(loadedWeapon);
             }
@@ -254,7 +276,31 @@ namespace XVIBE_TextRPG
                 Equipment.ATKBonus = 0;
             }
 
-            UpdateStats();
+            Equipment.ArmorInventory = data.ArmorInventory.Select(a => new Equipment.Armor(
+                a.Name,
+                Enum.Parse<Equipment.ArmorType>(a.Type),
+                a.DEF,
+                a.Price
+            )).ToList();
+
+            if (data.EquippedArmor != null)
+            {
+                var loadedArmor = new Equipment.Armor(
+                    data.EquippedArmor.Name,
+                    Enum.Parse<Equipment.ArmorType>(data.EquippedArmor.Type),
+                    data.EquippedArmor.DEF,
+                    data.EquippedArmor.Price
+                );
+
+                Equipment.Equip(loadedArmor);
+            }
+            else
+            {
+                Equipment.EquippedArmor = null;
+                Equipment.DEFBonus = 0;
+            }
+
+                UpdateStats();
         }
 
         public static void ResetAfterDeath()
@@ -268,6 +314,9 @@ namespace XVIBE_TextRPG
             Equipment.Inventory.Clear();
             Equipment.EquippedWeapon = null;
             Equipment.ATKBonus = 0;
+            Equipment.ArmorInventory.Clear();
+            Equipment.EquippedArmor = null;
+            Equipment.DEFBonus = 0;
             Player.EndTurn(); // 전투 종료 시 추가 능력치 초기화
 
             //직업에 따른 능력치 초기화
@@ -278,6 +327,29 @@ namespace XVIBE_TextRPG
             CurrentMP = MaxMP;
         }
 
-    }
+        // 레벨업
+        public static void LvUp()
+        {
+            int remainderExp = 0;
 
+            if (Exp >= 10)
+            {
+                remainderExp = Exp - 10; // 레벨업 하고 남은 경험치
+                Level++;
+                TotalATK += 0.5f;
+                TotalDEF += 1;
+                Exp = remainderExp;
+
+                Console.WriteLine("[캐릭터 정보]");
+                Console.WriteLine($"Lv.{Level - 1} {Name} -> Lv.{Level} {Name}");
+                Console.WriteLine($"Hp.{CurrentHP} -> {MaxHP}");
+                Console.WriteLine($"Mp.{CurrentMP} -> {MaxMP}");
+                Console.WriteLine($"공격력: {TotalATK - 0.5f} -> {TotalATK}");
+                Console.WriteLine($"방어력:{TotalDEF - 1} -> {TotalDEF}");
+                Console.WriteLine($"Exp:{Exp + 10} -> {remainderExp}\n");
+                Console.WriteLine("아무 키나 눌러주세요.\n");
+                Console.ReadLine();
+            }
+        }
+    }
 }

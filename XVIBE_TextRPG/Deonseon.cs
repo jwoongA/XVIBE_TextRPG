@@ -8,6 +8,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Transactions;
 using static XVIBE_TextRPG.Enemy;
+using static XVIBE_TextRPG.Equipment;
+using static XVIBE_TextRPG.WeaponReward;
 
 namespace XVIBE_TextRPG
 {
@@ -16,8 +18,9 @@ namespace XVIBE_TextRPG
         protected List<Enemy> monsters; // 몬스터 리스트
         protected List<string> battleLog; // 배틀 로그 리스트
         protected List<Reward> rewards = new List<Reward>(); // 던전 클리어 보상 리스트
+        private int expBeforeBattle; // 전투 시작 시 경험치 저장
 
-        public Deonseon() // 생성자
+        public Deonseon() // 생성자에서 보상 설정
         {
             rewards.Add(new GoldReward(GetGoldReward())); // 던전 클리어 골드 보상 rewards 리스트에 추가
         }
@@ -170,17 +173,20 @@ namespace XVIBE_TextRPG
                 DisplayBattleLog();
 
                 // 경험치 획득
-                foreach(var monster in monsters)
+                foreach (var monster in monsters)
                 {
                     if (monster.Dead) // 적이 죽었을 경우
                     {
-                        if(!monster.NotGetExperience) // 경험치 지급을 안 했을경우
+                        if (!monster.NotGetExperience) // 경험치 지급을 안 했을경우
                         {
                             GetExperience(monster);
                             monster.NotGetExperience = true; // 경험치 지급 -완-
                         }
-                    }    
+                    }
                 }
+
+                // 레벨업
+                Player.LvUp();
 
                 // 전투 결과 확인
                 if (Player.CurrentHP <= 0 && monsters.TrueForAll(m => m.IsDead()))
@@ -228,7 +234,7 @@ namespace XVIBE_TextRPG
         // 기본 공격 메서드
         private void BasicAttack(Enemy target)
         {
-            int damage = Player.GetCurrentATK();
+            float damage = Player.GetCurrentATK();
 
             if (target.IsDead())
             {
@@ -241,13 +247,25 @@ namespace XVIBE_TextRPG
             }
             else if (Combat.IsCriticalHit()) // 조건문 걸어서 치명타 터지는 상황 아닌 상황 나누기
             {
-                int criticalDamage = target.TakeCriticalDamage(damage);// 몬스터에게 치명타 데미지 피해
+                int criticalDamage = target.TakeCriticalDamage((int)damage);// 몬스터에게 치명타 데미지 피해
                 battleLog.Add($"플레이어가 {target.Name}에게 {criticalDamage}의 [치명타] 피해를 입혔습니다!!!");
+
+                if (target.IsDead()) 
+                { 
+                    Quest.CurrentKillCount += 1; 
+                }
+                Quest.CheckQuestConditions();
             }
             else
             {
-                target.TakeDamage(damage); // 일반 공격
+                target.TakeDamage((int)damage); // 일반 공격
                 battleLog.Add($"플레이어가 {target.Name}에게 {damage}의 피해를 입혔습니다.");
+
+                if (target.IsDead()) 
+                {
+                    Quest.CurrentKillCount += 1;
+                }
+                Quest.CheckQuestConditions();
             }
         }
 
@@ -263,11 +281,26 @@ namespace XVIBE_TextRPG
             {
                 Player.ThiefSkill(target);
                 battleLog.Add($"플레이어가 도적의 스킬을 사용하여 {target.Name}에게 큰 피해를 입혔습니다!");
+
+                if (target.IsDead())
+                {
+                    Quest.CurrentKillCount += 1;
+                }
+                Quest.CheckQuestConditions();
             }
             else if (Player.Job == "마법사")
             {
                 Player.MageSkill(monsters.ToArray());
                 battleLog.Add("플레이어가 마법사의 스킬을 사용하여 모든 적에게 피해를 입혔습니다!");
+
+                foreach (var monster in monsters)
+                {
+                    if (target.IsDead())
+                    {
+                        Quest.CurrentKillCount += 1;
+                    }
+                }
+                Quest.CheckQuestConditions();
             }
             else
             {
@@ -286,7 +319,7 @@ namespace XVIBE_TextRPG
                 {
                     continue;   // 몬스터가 죽으면 그냥 진행해라
                 }
-                else if (Combat.IsMiss(true)) // 플레이어를 공격할 때
+                else if (Combat.IsMiss()) // 10퍼센트 확률로 회피하는 경우 회피 판정해라
                 {
                     battleLog.Add($"플레이어가 {monster.Name}의 공격을 [회피]했습니다!");
                 }
@@ -316,15 +349,11 @@ namespace XVIBE_TextRPG
 
 
         // 전투 시작 시 경험치 저장
-        private int expBeforeBattle = 0;
+        private int totalExpGained = 0;
 
         // 전투 승리 메서드
         public void BattleVictory()
         {
-            GetRewards(); // 클리어 보상 호출
-
-            int expGained = Player.Exp - expBeforeBattle; // 던전에서 얻은 경험치 계산
-
             Console.WriteLine(new string('-', 40)); // 구분선
             Console.WriteLine(@"
  ___      ___ ___  ________ _________  ________  ________      ___    ___ ___       
@@ -339,14 +368,17 @@ namespace XVIBE_TextRPG
                                                                                     
 ");
             Console.WriteLine();
+            GetRewards(); // 클리어 보상 호출
             Console.WriteLine($"보상으로 {GetGoldReward()} G를 획득했습니다.");
-            Console.WriteLine($"경험치 {expGained}를 획득했습니다.");
-            Player.EndTurn(); // 전투 종료 시 초기화
+            Console.WriteLine($"총 경험치 {totalExpGained}를 획득했습니다.");
             Player.SavePlayerData();
             Console.WriteLine();
             Console.WriteLine("Enter 키를 눌러주세요.");
 
             Console.ReadLine();
+
+            // 메인 메뉴로 이동
+            MainMenu.ShowMainMenu();
         }
 
         // 전투 패배 메서드
@@ -378,6 +410,8 @@ namespace XVIBE_TextRPG
         private void GetExperience(Enemy Deadmonster)
         {
             Player.Exp += Deadmonster.Exp;
+            totalExpGained += Deadmonster.Exp; // 경험치 누적 저장
+            Quest.CheckQuestConditions();
         }
 
         // 각 던전별로 골드 보상액을 다르게 설정
@@ -393,6 +427,45 @@ namespace XVIBE_TextRPG
             {
                 reward.GetReward(); // Reward.cs에 있는 GetReward에서 보상을 받음
             }
+            DropItem(); // 아이템 보상
+        }
+
+        // 던전 클리어 후 아이템 보상
+        private void DropItem()
+        {
+            Random rand = new Random();
+
+            //인벤토리에 없는 아이템 리스트
+            List<Equipment.Weapon> NoWeapon = Shop.storeWeapons.Where(weapon => !Equipment.Inventory.Any(owned => owned.Name == weapon.Name)).ToList();
+            List<Equipment.Armor> NoArmor = Shop.storeArmors.Where(armor => !Equipment.ArmorInventory.Any(owned => owned.Name == armor.Name)).ToList();
+
+            if (NoWeapon.Count > 0) // 소지하지 않은 무기의 수 > 0
+            {
+                int randDrop = rand.Next(1, 101); // 무기 드랍 확률
+                int itemDrop = rand.Next(1, 101); // 무기와 방어구 중 하나 드랍 확률
+
+                if (randDrop <= 20) // 아이템 드랍률 20%
+                {
+                    if (itemDrop > 50) // 무기 드랍률 50%
+                    {
+                        int randnum = rand.Next(0, NoWeapon.Count); // 인벤토리에 없는 무기 개수 만큼
+                        Equipment.Weapon reWeapon = NoWeapon[randnum]; // 보상 무기 = 내가 소지하고 있지 않은 무기
+                        rewards.Add(new WeaponReward(reWeapon)); // 내가 소지하지 않은 무기를 보상 리스트에 추가
+                        new WeaponReward(reWeapon).GetReward();
+
+                        Console.WriteLine($"보상으로 '{reWeapon.Name}'을 획득했습니다!");
+                    }
+                    else // 방어구 드랍률 50%
+                    {
+                        int randnum = rand.Next(0, NoArmor.Count); // 인벤토리에 없는 방어구 개수 만큼
+                        Equipment.Armor reArmor = NoArmor[randnum]; // 보상 방어구 = 내가 소지하고 있지 않은 방어구
+                        rewards.Add(new ArmorReward(reArmor)); // 내가 소지하지 않은 방어구를 보상 리스트에 추가
+                        new ArmorReward(reArmor).GetReward();
+
+                        Console.WriteLine($"보상으로 '{reArmor.Name}'을 획득했습니다!");
+                    }
+                }
+            }
         }
     }
 
@@ -402,7 +475,7 @@ namespace XVIBE_TextRPG
         {
             Console.WriteLine("초급 던전에 입장합니다!");
         }
-          
+
         public override List<Enemy> GenerateMonsters()
         {
             var random = new Random();
