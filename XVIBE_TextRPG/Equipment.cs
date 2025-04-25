@@ -112,6 +112,7 @@ namespace XVIBE_TextRPG
             Quest.CheckQuestConditions();
             ATKBonus = weapon.ATK;
             Console.WriteLine($"{weapon.Name}을(를) 새로 장착했습니다!");
+            Player.UpdateStats();
         }
 
         // 방어구 장착
@@ -131,6 +132,7 @@ namespace XVIBE_TextRPG
             EquippedArmor = armor;
             DEFBonus = armor.DEF;
             Console.WriteLine($"{armor.Name}을(를) 새로 장착했습니다!");
+            Player.UpdateStats();
         }
 
         // 무기 해제
@@ -144,6 +146,7 @@ namespace XVIBE_TextRPG
                 EquippedWeapon = null;
                 ATKBonus = 0;
                 unequipped = true;
+                Player.UpdateStats();
             }
 
             if (EquippedArmor != null)
@@ -152,6 +155,7 @@ namespace XVIBE_TextRPG
                 EquippedArmor = null;
                 DEFBonus = 0;
                 unequipped = true;
+                Player.UpdateStats();
             }
 
             if (!unequipped)
