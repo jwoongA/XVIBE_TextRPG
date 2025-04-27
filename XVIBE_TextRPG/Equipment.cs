@@ -112,6 +112,7 @@ namespace XVIBE_TextRPG
             Quest.CheckQuestConditions();
             ATKBonus = weapon.ATK;
             Console.WriteLine($"{weapon.Name}을(를) 새로 장착했습니다!");
+            Player.UpdateStats();
         }
 
         // 방어구 장착
@@ -183,9 +184,6 @@ namespace XVIBE_TextRPG
                         Console.WriteLine($"{i + 1}. {equippedTag}{w}");
                     }
                 }
-
-                Console.WriteLine("\n0. 뒤로가기");
-                Console.WriteLine("장착할 무기 번호를 입력하거나 해제하려면 U를 입력하세요.");
 
                 if(ArmorInventory.Count == 0)
                 {

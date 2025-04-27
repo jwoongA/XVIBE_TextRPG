@@ -35,6 +35,10 @@ namespace XVIBE_TextRPG
         public static float BaseEvasionRate { get; set; } = 0; // 직업별 기본 회피율
 
 
+        public static float AdditionalEvasionRate { get; set; } = 0; // 추가 회피율
+        public static float BaseEvasionRate { get; set; } = 0; // 직업별 기본 회피율
+
+
         // 전투 턴 동안 추가 공격력
         private static int TemporaryATKBoost { get; set; } = 0;
 
