@@ -62,6 +62,7 @@ namespace XVIBE_TextRPG
                             GameData loaded = SaveSystem.Load();
                             if (loaded != null)
                             {
+                                Quest.QuestManager.QuestListDB(); // 퀘스트 리스트 초기화
                                 Player.LoadPlayerData(loaded);
                                 Console.WriteLine("[불러오기 완료]\nEnter를 눌러 계속하세요.");
                                 Console.ReadLine();

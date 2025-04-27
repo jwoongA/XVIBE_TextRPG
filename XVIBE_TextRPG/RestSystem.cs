@@ -17,25 +17,27 @@ namespace XVIBE_TextRPG
                 Console.Clear();
                 Console.WriteLine("[휴식하기]");
                 Console.WriteLine();
-                Console.WriteLine("500 G 를 내면 체력과 마나를 회복할 수 있습니다.");
+                Console.WriteLine("1500 G 를 내면 체력과 마나를 회복할 수 있습니다.");
                 Console.WriteLine();
                 Console.WriteLine($"현재 체력 : {Player.CurrentHP} / {Player.MaxHP}");
                 Console.WriteLine($"현재 마나 : {Player.CurrentMP} / {Player.MaxMP}");
                 Console.WriteLine($"보유 골드 : {Player.Gold}");
                 Console.WriteLine();
-                Console.Write("1. 휴식하기\n2. 나가기\n>>");
+                Console.Write("1. 휴식하기\n0. 나가기\n>>");
 
                 string input = Console.ReadLine();
                 bool rest = false;
+
+                // 복합포션(대) 보다 효율 안나오게 해야 포션 시스템이 의미있어짐
 
                 while (!rest)
                 {
                     switch (input)
                     {
                         case "1":
-                            if (Player.Gold >= 500)
+                            if (Player.Gold >= 1500)
                             {
-                                Player.Gold -= 500;
+                                Player.Gold -= 1500;
                                 Player.CurrentHP = Math.Min(Player.CurrentHP + 100, Player.MaxHP);
                                 Player.CurrentMP = Math.Min(Player.CurrentMP + 50, Player.MaxMP);
 
@@ -51,7 +53,7 @@ namespace XVIBE_TextRPG
                             Console.ReadLine();
                             rest = true;
                             break;
-                        case "2":
+                        case "0":
                             restConfirmed = true;
                             rest = true;
                             break;
