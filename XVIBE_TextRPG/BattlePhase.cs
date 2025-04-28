@@ -32,7 +32,7 @@ namespace XVIBE_TextRPG
                     Player.UpdateStats();
                     Console.WriteLine("던전 입장 중...");
                     System.Threading.Thread.Sleep(2000); // 2초 대기
-                    EasyDeonseon dungeon = new EasyDeonseon(); 
+                    EasyDungeon dungeon = new EasyDungeon(); 
 
                     break;
                 case "2":
@@ -47,7 +47,7 @@ namespace XVIBE_TextRPG
                     Player.UpdateStats();
                     Console.WriteLine("던전 입장 중...");
                     System.Threading.Thread.Sleep(2000); // 2초 대기
-                    NormalDeonseon normalDungeon = new NormalDeonseon();
+                    NormalDungeon normalDungeon = new NormalDungeon();
 
                     break;
                 case "3":
@@ -62,7 +62,7 @@ namespace XVIBE_TextRPG
                     Player.UpdateStats();
                     Console.WriteLine("던전 입장 중...");
                     System.Threading.Thread.Sleep(2000); // 2초 대기
-                    HardDeonseon hardDungeon = new HardDeonseon();
+                    HardDungeon hardDungeon = new HardDungeon();
 
                     break;
                 case "0":

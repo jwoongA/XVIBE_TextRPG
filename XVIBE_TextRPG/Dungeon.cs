@@ -13,14 +13,14 @@ using static XVIBE_TextRPG.WeaponReward;
 
 namespace XVIBE_TextRPG
 {
-    public class Deonseon // 부모 클래스 이녀석을 자식 클래스인 초급 중급 고급 던전 클래스에 상속시킬거임
+    public class Dungeon // 부모 클래스 이녀석을 자식 클래스인 초급 중급 고급 던전 클래스에 상속시킬거임
     {
         protected List<Enemy> monsters; // 몬스터 리스트
         protected List<string> battleLog; // 배틀 로그 리스트
         protected List<Reward> rewards = new List<Reward>(); // 던전 클리어 보상 리스트
         private int expBeforeBattle; // 전투 시작 시 경험치 저장
 
-        public Deonseon() // 생성자에서 보상 설정
+        public Dungeon() // 생성자에서 보상 설정
         {
             rewards.Add(new GoldReward(GetGoldReward())); // 던전 클리어 골드 보상 rewards 리스트에 추가
         }
@@ -471,7 +471,7 @@ namespace XVIBE_TextRPG
         }
     }
 
-    public class EasyDeonseon : Deonseon // 초급 던전
+    public class EasyDungeon : Dungeon // 초급 던전
     {
         public override void ShowEnterMessage()
         {
@@ -493,13 +493,13 @@ namespace XVIBE_TextRPG
             return monsterList;
         }
 
-        public EasyDeonseon() // 출력 메시지와 상속받은 던전 입장 메서드 실행
+        public EasyDungeon() // 출력 메시지와 상속받은 던전 입장 메서드 실행
         {
             Enter();
         }
     }
 
-    public class NormalDeonseon : Deonseon // 중급 던전
+    public class NormalDungeon : Dungeon // 중급 던전
     {
         public override void ShowEnterMessage()
         {
@@ -526,13 +526,13 @@ namespace XVIBE_TextRPG
             return 390; // 390G 골드 보상 공식은 Exp * 15G
         }
 
-        public NormalDeonseon() // 출력 메시지와 상속받은 던전 입장 메서드 실행
+        public NormalDungeon() // 출력 메시지와 상속받은 던전 입장 메서드 실행
         {
             Enter();
         }
     }
 
-    public class HardDeonseon : Deonseon // 고급 던전
+    public class HardDungeon : Dungeon // 고급 던전
     {
         public override void ShowEnterMessage()
         {
@@ -559,7 +559,7 @@ namespace XVIBE_TextRPG
             return 645; // 645G 골드 보상 공식은 Exp * 15G
         }
 
-        public HardDeonseon() // 출력 메시지와 상속받은 던전 입장 메서드 실행
+        public HardDungeon() // 출력 메시지와 상속받은 던전 입장 메서드 실행
         {
             Enter();
         }
